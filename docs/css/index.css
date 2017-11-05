@@ -1,0 +1,18 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+}
+
+main {
+	color: #616161;
+	background-color: #f5f5f5;
+}
+
+header {
+	padding: 2%;
+	font-size: 19px;
+	font-family: 'Roboto';
+	color: #efffff;
+	background-color: #2c3e50;
+}
