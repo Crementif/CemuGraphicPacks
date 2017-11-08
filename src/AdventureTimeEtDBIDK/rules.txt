@@ -1,13 +1,13 @@
 ## >> Graphic Packs Metadata <<
-## CompatWiki = "http://compat.cemu.info/wiki/Adventure_Time:_Explore_the_Dungeon_Because_I_Don%27t_Know!"
-## TitleID = "ADVPAF"
-## SearchTags = ["Adventure Time: Explore the Dungeon Because I DON'T KNOW!"]
-## NativeRes = "1080"
-## Description = 
-## knownGFXIssues = 
-## PreviewImages = 
-## customPreviewJS = 
-## customizableDefines = []
+## compatWiki = "http://compat.cemu.info/wiki/Adventure_Time:_Explore_the_Dungeon_Because_I_Don%27t_Know!";
+## titleID = "ADVPAF";
+## searchTags = ["Adventure Time: Explore the Dungeon Because I DON'T KNOW!"];
+## nativeRes = "1080";
+## description = ; # Short description. When empty and when it's a resolution pack it assumes it'll have an automatic description.
+## warning = ; # Used to warn about gfx issues.
+## otherLinks = ; # Specify extra buttons in the form of html elements like <a href="https://somewebsite.com">. Existing buttons are copyPermaLink, cemuhook website when it's either known to have h254 videos or has a patches.txt file in it.
+## customPreviewJS = ; # If found, ignores images, preview element is loaded into variable.
+## customizableDefines = []; # [["keyName","keyValue","default","description"],["etc"],["etc"]]
 ## << END >>
 
 [Definition]
