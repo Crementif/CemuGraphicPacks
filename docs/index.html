@@ -5,15 +5,67 @@
 	<title>Cemu Graphic Packs</title>
 	<link rel="stylesheet" type="text/css" href="css/index.css">
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<!-- >>> Javascript functions <<< -->
+	<script>
+		function addGameList(folderName, gameTitle) { // Use template to add a new game entry to the list. The passed variables will change the result.
+			var gameListTemplate = document.querySelector('#gameListTemplate');
+			gameListTemplate.content.querySelector('input').id=folderName;
+			gameListTemplate.content.querySelector('label').for=folderName;
+			gameListTemplate.content.querySelector('label').innerText=gameTitle[0]; // The first search tag should always be the game name.
+			gameListTemplate.content.querySelector('div').dataset.searchtags=JSON.stringify(gameTitle); // Store all the tags in an attribute.
+			
+			document.getElementsByName("selectGames")[0].appendChild(document.importNode(gameListTemplate.content, true));
+		}
+		function filterGameList(searchString) {
+			gameNodes = document.getElementsByClassName("gameList");
+			for (i=0; i<gameNodes.length; i++) { // Cycle all the games
+				
+				for (j=0; i<1; i++) {
+					if (todo.innerHTML.toUpperCase().indexOf(searchString.toUpperCase) > -1) { // Change to uppercase for comparision.
+						todo[i].style.display = "";
+					} else {
+						todo[i].style.display = "none";
+					}
+				}
+				
+			}
+		}
+	</script>
+	<!-- <<< End Javascript >>> -->
 </head>
-
 <body>
 	<header>
-		Cemu Graphic Packs
+		<a id="logo" href="/index.html">Cemu Graphic Packs</a>
+		<nav>
+			<ul class="progressBar">
+				<li><a id="progressBar1" href="#">Download Graphic Packs</a></li>
+				<li><a id="progressBar2" href="#">Select additional packs</a></li>
+			</ul>
+		</nav>
 	</header>
 	
 	<main>
-		This is some example text.
+		<form name="selectGames" enctype="text/plain">
+			<p>Select a few of these graphic packs!<br></p>
+			<input type="search" id="searchGames" placeholder="Search games..." onKeyUp="filterGameList(this)">
+			
+			<template id="gameListTemplate">
+				<div class="gameList" data-searchtags="arraySearchTags">
+					<input type="checkbox" id="folderName" name="game">
+					<label for="folderName">gameTitle</label>
+				</div>
+			</template>
+			
+			<script>
+				addGameList("BreathOfTheWild", ['Breath of the Wild', 'BotW']);
+				addGameList("Test2", ['OtherCoolGame', 'MarioOdessey']);
+				addGameList("Test3", ['CemuOtherGame']);
+			</script>
+		</form>
 	</main>
+	
+	<footer>
+		Site created by Crementif. Footer stuff etc.
+	</footer>
 </body>
 </html>
