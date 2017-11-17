@@ -1,0 +1,11 @@
+[TextureRedefine] # TV resolution
+width = 1920
+height = 1080
+overwriteWidth = 
+overwriteHeight = 
+
+[TextureRedefine] # Gamepad Resolution
+width = 854
+height = 480
+overwriteWidth = 
+overwriteHeight = 
