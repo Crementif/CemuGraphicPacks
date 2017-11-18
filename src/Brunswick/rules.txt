@@ -1,0 +1,18 @@
+[Definition]
+titleIds = 00050000101D4200
+name = "Brunswick Pro Bowling"
+## nativeRes = 720
+## searchTags = []
+## compatWiki = "http://compat.cemu.info/wiki/Brunswick_Pro_Bowling"
+
+[TextureRedefine] # TV upscaling
+width = 1280
+height = 720
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Gamepad upscaling
+width = 854
+height = 480
+overwriteWidth = gamepad
+overwriteHeight = gamepad

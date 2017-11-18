@@ -7,10 +7,19 @@
 	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 	<!-- >>> Javascript functions <<< -->
 	<script>
+		// Calculate Github repository info, avoid using extra api calls.
+		repositoryUsername = "Crementif"; // Replace with window.location.host.split(".")[0];
+		repositoryName = "CemuGraphicPacks"; // Replace with window.location.pathname.split("/")[1];
+		defaultFetchUrl = "https://api.github.com/repos/"+repositoryUsername+"/"+repositoryName+"/git/trees/master:src?recursive=3";
+		// This info is only used to make 'dynamic' fetch calls.
+		
+		
+		var gameList = new Object;
+		
 		function addGameList(folderName, gameTitle) { // Use template to add a new game entry to the list. The passed variables will change the result.
-			var gameListTemplate = document.querySelector('#gameListTemplate');
+			gameListTemplate = document.querySelector('#gameListTemplate');
 			gameListTemplate.content.querySelector('input').id=folderName;
-			gameListTemplate.content.querySelector('label').for=folderName;
+			gameListTemplate.content.querySelector('label').htmlFor=folderName;
 			gameListTemplate.content.querySelector('label').innerText=gameTitle[0]; // The first search tag should always be the game name.
 			gameListTemplate.content.querySelector('div').dataset.searchtags=JSON.stringify(gameTitle); // Store all the tags in an attribute.
 			
@@ -18,18 +27,48 @@
 		}
 		function filterGameList(searchString) {
 			gameNodes = document.getElementsByClassName("gameList");
-			for (i=0; i<gameNodes.length; i++) { // Cycle all the games
-				
-				for (j=0; i<1; i++) {
-					if (todo.innerHTML.toUpperCase().indexOf(searchString.toUpperCase) > -1) { // Change to uppercase for comparision.
-						todo[i].style.display = "";
-					} else {
-						todo[i].style.display = "none";
+			searchResults = 0;
+			for (i=0; i<gameNodes.length; i++) { // Cycle through all of the games
+				for (j=0; j<JSON.parse(gameNodes[i].dataset.searchtags).length; j++) { // Cycle trough each of the search tags
+					if (JSON.parse(gameNodes[i].dataset.searchtags)[j].toUpperCase().indexOf(searchString.value.toUpperCase()) > -1) {
+						gameNodes[i].style.display = ""; // Found matching search tag.
+						searchResults += 1;
+						break; // Break and continue to check for other games.
+					}
+					else {
+						gameNodes[i].style.display = "none"; // Hide game from the list, but it next search tag might reveal it.
 					}
 				}
-				
+			}
+			console.log("Received "+searchResults+" search results.");
+		}
+		function fetchGameInfo(fetchUrl) { // Fetch repository contents
+			if (typeof fetch === "function") {
+				fetch(fetchUrl, {cache: "default"}).then( // Todo: Fetch Github's hourly api limit, then decide whether to use the cached version if it's used up.
+					function(response) {
+						if (response.status !== 200) {
+							console.warn("A wild fetch problem appeared! It's super effective! It's Fetch Status Code™ is "+response.status);
+							return;
+						}
+						response.json().then(function(data) {
+							console.debug(data);
+							// Now sort this data to some usable data object.
+							appendTo = "";
+							for (i = 0; i < data.tree.length; i++) {
+								if (data.tree[i].path.split("/").length - 1 == 0) {
+									appendTo = data.tree[i].path;
+								}
+							}
+						})
+					}
+				)
+			}
+			else {
+				console.warn("Fetch isn't supported (yet) for your browser. If you get this error, your browser isn't yet supported by this website.");
+				// TODO: Implement a polyfill to support more browsers.
 			}
 		}
+		fetchGameInfo(defaultFetchUrl);
 	</script>
 	<!-- <<< End Javascript >>> -->
 </head>
@@ -47,7 +86,7 @@
 	<main>
 		<form name="selectGames" enctype="text/plain">
 			<p>Select a few of these graphic packs!<br></p>
-			<input type="search" id="searchGames" placeholder="Search games..." onKeyUp="filterGameList(this)">
+			<input type="search" id="searchGames" placeholder="Search games..." oninput="filterGameList(this)">
 			
 			<template id="gameListTemplate">
 				<div class="gameList" data-searchtags="arraySearchTags">
@@ -65,7 +104,7 @@
 	</main>
 	
 	<footer>
-		Site created by Crementif. Footer stuff etc.
+		Site created by Crementif. <a href="">Help us over on github!</a> <a href="">Site not working?</a>
 	</footer>
 </body>
 </html>

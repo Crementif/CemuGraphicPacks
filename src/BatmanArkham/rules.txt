@@ -1,0 +1,19 @@
+[Definition]
+titleIds = 0005000010112900,0005000010111300,000500001010AB00
+name = "Batman: Arkham City Armored Edition"
+## nativeRes = 720
+## searchTags = ["Batman 2"]
+## compatWiki = "http://compat.cemu.info/wiki/Batman:_Arkham_City_Armored_Edition"
+
+[TextureRedefine] # TV upscaling
+width = 1280
+height = 720
+formatsExcluded = 0x41A # Exclude the intro background texture
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Gamepad upscaling
+width = 854
+height = 480
+overwriteWidth = gamepad
+overwriteHeight = gamepad

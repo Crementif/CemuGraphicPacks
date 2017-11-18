@@ -1,0 +1,104 @@
+[Definition]
+titleIds = 0005000010180600,0005000010180700,0005000010180500
+name = "Captain Toad: Treasure Tracker"
+## nativeRes = 720
+## searchTags = ["CT:TT"]
+## compatWiki = "http://compat.cemu.info/wiki/Captain_Toad:_Treasure_Tracker"
+
+[TextureRedefine] # TV upscaling
+width = 1280
+height = 720
+formatsExcluded = 0x008,0x41A,0x034,0x035 # Exclude obvious textures
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Zoomed in
+width = 1128
+height = 720
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Zoom transition
+width = 1000
+height = 600
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Zoom transition 2
+width = 1000
+height = 720
+overwriteWidth = auto
+overwriteHeight = auto
+
+
+[TextureRedefine] # Half-res alpha upscaling
+width = 640
+height = 360
+formatsExcluded = 0x41A # Exclude obvious textures
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Half-res (zoomed in) upscaling
+width = 564
+height = 360
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Half-res (zoom transition) upscaling
+width = 500
+height = 300
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Half-res (zoom transition 2) upscaling
+width = 500
+height = 360
+overwriteWidth = auto
+overwriteHeight = auto
+
+
+[TextureRedefine] # Quarter-res alpha upscaling
+width = 320
+height = 180
+formatsExcluded = 0x41A # Exclude obvious textures
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Quarter-res (zoomed in) upscaling
+width = 282
+height = 180
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Quarter-res (zoom transition) upscaling
+width = 250
+height = 150
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Quarter-res (zoom transition 2) upscaling
+width = 250
+height = 180
+overwriteWidth = auto
+overwriteHeight = auto
+
+
+[TextureRedefine] # Gamepad upscaling
+width = 854
+height = 480
+overwriteWidth = <?=round($scaleFactorX*1280)?> 
+overwriteHeight = <?=round($scaleFactorY*720)?> 
+
+[TextureRedefine] # Half-res (gamepad) upscaling
+width = 427
+height = 240
+formatsExcluded = 0x41A # exclude obvious textures
+overwriteWidth = <?=round($scaleFactorX*640)?> 
+overwriteHeight = <?=round($scaleFactorY*360)?> 
+
+[TextureRedefine] # Quarter-res (gamepad) upscaling
+width = 214
+height = 120
+formatsExcluded = 0x41A # exclude obvious textures
+overwriteWidth = <?=round($scaleFactorX*320)?> 
+overwriteHeight = <?=round($scaleFactorY*180)?> 

@@ -1,7 +1,0 @@
-[Graphic Packs Metadata]
-gameID = "ADVPAF"
-titleIds = "0005000010144000,000500001014E100"
-nativeRes = 1080
-searchTitle = ["Adventure Time: Explore the Dungeon Because I DON'T KNOW!"]
-compatWiki = "http://compat.cemu.info/wiki/Adventure_Time:_Explore_the_Dungeon_Because_I_Don%27t_Know!"
-hasH264 = false

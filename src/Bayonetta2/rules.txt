@@ -1,0 +1,39 @@
+[Definition]
+titleIds = 0005000010172600,0005000010172700,000500001011B900
+name = "Bayonetta 2"
+## nativeRes = 720
+## searchTags = []
+## compatWiki = "http://compat.cemu.info/wiki/Bayonetta_2"
+## h264 = true
+
+[TextureRedefine] # TV upscaling
+width = 1280
+height = 720
+tileModesExcluded = 0x001
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Half-res upscaling
+width = 640
+height = 360
+tileModesExcluded = 0x001
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Quarter-res upscaling
+width = 320
+height = 176
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # 2nd quarter-res upscaling
+width = 320
+height = 180
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Gamepad upscaling
+width = 854
+height = 480
+overwriteWidth = gamepad
+overwriteHeight = gamepad
