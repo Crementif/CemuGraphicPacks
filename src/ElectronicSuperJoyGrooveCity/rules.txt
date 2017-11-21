@@ -1,0 +1,18 @@
+[Definition]
+titleIds = 0005000010197300
+name = "Electronic Super Joy: Groove City"
+## nativeRes = 1080
+## searchTags = []
+## compatWiki = "http://compat.cemu.info/wiki/Electronic_Super_Joy:_Groove_City"
+
+[TextureRedefine] # TV upscaling
+width = 1920
+height = 1080
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Gamepad upscaling
+width = 854
+height = 480
+overwriteWidth = auto
+overwriteHeight = auto 

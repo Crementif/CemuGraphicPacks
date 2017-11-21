@@ -1,0 +1,21 @@
+[Definition]
+titleIds = 000500001F600900,000500001F600A00,000500001F600B00
+name = "Paper Mario: Color Splash"
+## nativeRes = 720
+## searchTags = ["Paper Mario 5"]
+## compatWiki = "http://compat.cemu.info/wiki/Paper_Mario:_Color_Splash"
+## h264 = true
+
+[TextureRedefine] # TV upscaling
+width = 1280
+height = 720
+formatsExcluded = 0x431
+tileModesExcluded = 0x001
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Gamepad upscaling
+width = 854
+height = 480
+overwriteWidth = gamepad
+overwriteHeight = gamepad
