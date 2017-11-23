@@ -1,0 +1,18 @@
+[Definition]
+titleIds = 000500001019AE00,00050000101A2C00
+name = "Family Tennis SP"
+## nativeRes = 720
+## searchTags = []
+## compatWiki = "http://compat.cemu.info/wiki/Family_Tennis_SP"
+
+[TextureRedefine] # TV upscaling
+width = 1280
+height = 720
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Gamepad upscaling
+width = 854
+height = 480
+overwriteWidth = auto
+overwriteHeight = auto

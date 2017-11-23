@@ -1,0 +1,43 @@
+[Definition]
+titleIds = 000500001012f000
+name = "FAST Racing NEO"
+## nativeRes = 720
+## searchTags = []
+## compatWiki = "http://compat.cemu.info/wiki/Fast_Racing_Neo"
+
+[TextureRedefine] # TV upscaling
+width = 1280
+height = 720
+formatsExcluded = 0x433
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Half-res upscaling
+width = 640
+height = 360
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Half-width 1 upscaling
+width = 640
+height = 720
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Half-width 2 upscaling
+width = 320
+height = 360
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Quarter-res upscaling
+width = 160
+height = 180
+overwriteWidth = auto
+overwriteHeight = auto
+
+[TextureRedefine] # Gamepad upscaling
+width = 854
+height = 480
+overwriteWidth = gamepad
+overwriteHeight = gamepad
