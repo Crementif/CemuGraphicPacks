@@ -11,10 +11,11 @@
 		repositoryUsername = "Crementif"; // Replace with window.location.host.split(".")[0];
 		repositoryName = "CemuGraphicPacks"; // Replace with window.location.pathname.split("/")[1];
 		defaultFetchUrl = "https://api.github.com/repos/"+repositoryUsername+"/"+repositoryName+"/git/trees/master:src?recursive=3";
+		defaultFileUrl = "https://raw.githubusercontent.com/"+repositoryUsername+"/"+repositoryName+"/master/src/"
 		// This info is only used to make 'dynamic' fetch calls.
 		
 		
-		var gameList = new Object;
+		var gameList = [];
 		
 		function addGameList(folderName, gameTitle) { // Use template to add a new game entry to the list. The passed variables will change the result.
 			gameListTemplate = document.querySelector('#gameListTemplate');
@@ -42,9 +43,10 @@
 			}
 			console.log("Received "+searchResults+" search results.");
 		}
+		
 		function fetchGameInfo(fetchUrl) { // Fetch repository contents
 			if (typeof fetch === "function") {
-				fetch(fetchUrl, {cache: "default"}).then( // Todo: Fetch Github's hourly api limit, then decide whether to use the cached version if it's used up.
+				fetch(fetchUrl, {cache: "force-cache", headers: {Accept: "application/vnd.github.v3+json"}}).then( // Todo: Check if caching mode works with "default".
 					function(response) {
 						if (response.status !== 200) {
 							console.warn("A wild fetch problem appeared! It's super effective! It's Fetch Status Code™ is "+response.status);
@@ -53,12 +55,49 @@
 						response.json().then(function(data) {
 							console.debug(data);
 							// Now sort this data to some usable data object.
-							appendTo = "";
 							for (i = 0; i < data.tree.length; i++) {
 								if (data.tree[i].path.split("/").length - 1 == 0) {
-									appendTo = data.tree[i].path;
+									// All data now needs to be appended to this game entry in our database object.
+									console.debug(">>> Found "+data.tree[i].path);
+									gameList.push({folderName: data.tree[i].path});
+								}
+								else if (data.tree[i].path == gameList[gameList.length-1].folderName+"/rules.txt") {
+									// Found the main resolution pack rules, which contains most of our info.
+									fetch(defaultFileUrl+data.tree[i].path, {cache: "force-cache"}).then(
+										function(response) {
+											if (response.status !== 200) {
+												console.warn("Oh no, it's fetch status code is retarded! Fetch status code is "+response.status);
+												return;
+											}
+											response.text().then(function(rulesString) {
+												rulesFile = rulesString.match(/[^\r\n]+/g);									
+												for (j = 0; j < rulesFile.length; j++) {
+													// Support comments. Need to remove them before checking cases on it.
+													cleanLine = rulesFile[j].substr(0, -rulesFile[j].indexOf("#")>0 ? rulesFile[j].length : rulesFile[j].indexOf("#")); // Remove lines.
+													console.log(">>>> "+cleanLine);
+													// Now process each line and we'll have the parsed file.
+													if (cleanLine.trim() == "[Definition]") {
+														currentSection = cleanLine.trim();
+														console.log("Definitely definition!");
+													}
+													else if (cleanLine.trim().charAt(0) == '[' && cleanLine.trim().slice(-1) == ']') {
+														console.log("Found section: "+cleanLine);
+													}
+													//console.log(cleanLine.charAt(0)+" and "+rulesFile[j].slice(-1));
+												}
+												//console.log(rulesFile);
+											})
+										}
+									)
+								}
+								else if (data.tree[i].path == gameList[gameList.length-1].folderName+"/patches.txt") {
+									// Found ultrawide screen patches.
+								}
+								else if (data.tree[i].path == gameList[gameList.length-1].folderName+"/preview/") {
+									// Found preview pictures.
 								}
 							}
+							console.log(gameList);
 						})
 					}
 				)
@@ -97,14 +136,14 @@
 			
 			<script>
 				addGameList("BreathOfTheWild", ['Breath of the Wild', 'BotW']);
-				addGameList("Test2", ['OtherCoolGame', 'MarioOdessey']);
-				addGameList("Test3", ['CemuOtherGame']);
+				addGameList("Test2", ['OtherGame', 'MarioOdessey']);
+				addGameList("Test3", ['AndAnotherCoolGame']);
 			</script>
 		</form>
 	</main>
 	
 	<footer>
-		Site created by Crementif. <a href="">Help us over on github!</a> <a href="">Site not working?</a>
+		<a href="">Help us over on github!</a> <a href="">Site not working?</a> <a href="">Graphic packs for Cemu&lt;1.8.0</a>
 	</footer>
 </body>
 </html>
