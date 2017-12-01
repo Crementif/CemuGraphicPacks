@@ -1,6 +1,6 @@
 [Definition]
 titleIds = 0005000010180B00,0005000010177200
-name = "Citizens Of Earth
+name = "Citizens Of Earth"
 ## nativeRes = 720
 ## searchTags = []
 ## compatWiki = "http://compat.cemu.info/wiki/Citizens_of_Earth"
