@@ -14,8 +14,7 @@
 		defaultFileUrl = "https://raw.githubusercontent.com/"+repositoryUsername+"/"+repositoryName+"/master/src/"
 		// This info is only used to make 'dynamic' fetch calls.
 		
-		
-		var gameList = [];
+		var gameList = {};
 		
 		function addGameList(folderName, gameTitle) { // Use template to add a new game entry to the list. The passed variables will change the result.
 			gameListTemplate = document.querySelector('#gameListTemplate');
@@ -26,6 +25,7 @@
 			
 			document.getElementsByName("selectGames")[0].appendChild(document.importNode(gameListTemplate.content, true));
 		}
+		
 		function filterGameList(searchString) {
 			gameNodes = document.getElementsByClassName("gameList");
 			searchResults = 0;
@@ -44,70 +44,107 @@
 			console.log("Received "+searchResults+" search results.");
 		}
 		
-		function fetchGameInfo(fetchUrl) { // Fetch repository contents
-			if (typeof fetch === "function") {
-				fetch(fetchUrl, {cache: "force-cache", headers: {Accept: "application/vnd.github.v3+json"}}).then( // Todo: Check if caching mode works with "default".
-					function(response) {
-						if (response.status !== 200) {
-							console.warn("A wild fetch problem appeared! It's super effective! It's Fetch Status Code™ is "+response.status);
-							return;
-						}
-						response.json().then(function(data) {
-							console.debug(data);
-							// Now sort this data to some usable data object.
-							for (i = 0; i < data.tree.length; i++) {
-								if (data.tree[i].path.split("/").length - 1 == 0) {
-									// All data now needs to be appended to this game entry in our database object.
-									console.debug(">>> Found "+data.tree[i].path);
-									gameList.push({folderName: data.tree[i].path});
-								}
-								else if (data.tree[i].path == gameList[gameList.length-1].folderName+"/rules.txt") {
-									// Found the main resolution pack rules, which contains most of our info.
-									fetch(defaultFileUrl+data.tree[i].path, {cache: "force-cache"}).then(
-										function(response) {
-											if (response.status !== 200) {
-												console.warn("Oh no, it's fetch status code is retarded! Fetch status code is "+response.status);
-												return;
-											}
-											response.text().then(function(rulesString) {
-												rulesFile = rulesString.match(/[^\r\n]+/g);									
-												for (j = 0; j < rulesFile.length; j++) {
-													// Support comments. Need to remove them before checking cases on it.
-													cleanLine = rulesFile[j].substr(0, -rulesFile[j].indexOf("#")>0 ? rulesFile[j].length : rulesFile[j].indexOf("#")); // Remove lines.
-													console.log(">>>> "+cleanLine);
-													// Now process each line and we'll have the parsed file.
-													if (cleanLine.trim() == "[Definition]") {
-														currentSection = cleanLine.trim();
-														console.log("Definitely definition!");
-													}
-													else if (cleanLine.trim().charAt(0) == '[' && cleanLine.trim().slice(-1) == ']') {
-														console.log("Found section: "+cleanLine);
-													}
-													//console.log(cleanLine.charAt(0)+" and "+rulesFile[j].slice(-1));
-												}
-												//console.log(rulesFile);
-											})
-										}
-									)
-								}
-								else if (data.tree[i].path == gameList[gameList.length-1].folderName+"/patches.txt") {
-									// Found ultrawide screen patches.
-								}
-								else if (data.tree[i].path == gameList[gameList.length-1].folderName+"/preview/") {
-									// Found preview pictures.
-								}
-							}
-							console.log(gameList);
-						})
+		function showLoad() {
+			for (var game in gameList) {
+				addGameList(game, gameList[game].searchTags);
+				// console.log(gameList[game]);
+			}
+		}
+		
+		function filterUndefined(array) {
+			newArray = [];
+			for (i=0; i < array.length; i++) {
+    			if (array[i] !== undefined) newArray.push(array[i]);
+  			}
+			return newArray;
+		}
+		
+		function fetchUrl(url, options) {
+			return fetch(url, options).then(function(fetchResponse) {
+				if (!fetchResponse.ok) {
+					throw Error("A wild fetch problem appeared! It's super effective! It's Fetch Status Code™ is "+fetchResponse.statusText);
+				}
+				return fetchResponse;
+			})
+		}
+		
+		function fetchJson(jsonUrl) { // Async, returns Promise.
+			return fetchUrl(jsonUrl, {cache: "force-cache", headers: {Accept: "application/vnd.github.v3+json"}}).then(jsonResponse => jsonResponse.json());
+		}
+		
+		function fetchText(textUrl) {
+			return fetchUrl(defaultFileUrl+textUrl, {cache: "no-store"}).then(textResponse => textResponse.text());
+		}
+		
+		function listResponses(treeEntry) {
+			// Process every entry passed into gameList.
+			if (treeEntry.path.split("/").length - 1 == 0) { // 
+				// Found game folder, add game's array to gameList.
+				gameList[treeEntry.path] = {}; // Creates gameList abbtribute for this game.
+				currentGame = treeEntry.path; // This allows `this` to access this game's attribute.
+			}
+			else if (treeEntry.path == treeEntry.path.split("/")[0]+"/rules.txt") {
+				// Found main resolution pack, crawl (meta)data info.
+				return fetchText(treeEntry.path).then(rulesResponse => {
+					// Define some functions only used for rules.txt's.
+					function getKeyProperties(keyString) {
+						// Split name and value (and trim them). Returns an array, name[0] and value[1].
+						return keyString.split(/=(.+)/).map(array => array.trim());
 					}
-				)
+					
+					rulesLines = rulesResponse.match(/[^\r\n]+/g);
+					currentGame = treeEntry.path.split("/")[0];
+					for (i=0; i<rulesLines.length; i++) {
+						// Keeping comments, but have something to compare with. Also make a variable that holds the current line, as it'll result in overall faster read access.
+						currentLine = rulesLines[i].trim();
+						parseLine = currentLine.substr(0, -currentLine.indexOf("#")>0 ? currentLine.length : currentLine.indexOf("#")).trim();
+						
+						if (parseLine.charAt(0) == '[' && parseLine.slice(-1) == ']') { // New section
+							currentSection = parseLine;
+						}
+						else if (currentSection=="[Definition]") {
+							// Generally, we only expect metadata in "[Definition]" section for rules.
+							if (currentLine.charAt(0) == '#' && currentLine.charAt(1) == '#') { // Current line
+								gameList[currentGame][getKeyProperties(currentLine.substr(2))[0]] = JSON.parse(getKeyProperties(currentLine.substr(2))[1]);
+							}
+							// Now only expect either a name or titleId's keys.
+							else if (getKeyProperties(parseLine)[0]=="name") { // Game Title
+								gameList[currentGame].gameTitle = getKeyProperties(parseLine)[1].slice(1, -1); // Removes quotes.
+							}
+							else if (getKeyProperties(parseLine)[0]=="titleIds") { // Game IDs
+								gameList[currentGame].titleIds = getKeyProperties(parseLine)[1];
+							}
+							else {
+								console.warn("Unexpected rules line: `"+parseLine+"` in `"+currentSection+"` section from `"+treeEntry.path+"`.");
+							}
+							
+						}
+						// Write temporary placeholders, place 'instructions' 
+					}
+					gameList[currentGame].searchTags.unshift(gameList[currentGame].gameTitle); // Add game title to search tags, easier to pass.
+					
+					return rulesResponse;
+				});
+			}
+		}
+		
+		function listGames(treeFetchUrl) { // Fetch repository contents
+			if (self.fetch) {
+				// Fetch is supported by browser.
+				fetchJson(treeFetchUrl).then(treeResponse => {
+					console.debug(treeResponse);
+					// Initialize new Promise, made out of every other game file.
+					Promise.all(filterUndefined(treeResponse.tree.map(listResponses))).then(dataResponses => {
+						// Now that all promises are resolved (and everything is in gameList), wait for user interaction to finish.
+						showLoad();
+					});
+				});
 			}
 			else {
 				console.warn("Fetch isn't supported (yet) for your browser. If you get this error, your browser isn't yet supported by this website.");
-				// TODO: Implement a polyfill to support more browsers.
 			}
 		}
-		fetchGameInfo(defaultFetchUrl);
+		listGames(defaultFetchUrl);
 	</script>
 	<!-- <<< End Javascript >>> -->
 </head>
@@ -135,9 +172,6 @@
 			</template>
 			
 			<script>
-				addGameList("BreathOfTheWild", ['Breath of the Wild', 'BotW']);
-				addGameList("Test2", ['OtherGame', 'MarioOdessey']);
-				addGameList("Test3", ['AndAnotherCoolGame']);
 			</script>
 		</form>
 	</main>
