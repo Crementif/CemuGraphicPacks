@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Cemu Graphic Packs</title>
 	<link rel="stylesheet" type="text/css" href="css/index.css">
-	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
 	<!-- >>> Javascript functions <<< -->
 	<script>
 		// Calculate Github repository info, avoid using extra api calls.
@@ -12,6 +12,7 @@
 		repositoryName = "CemuGraphicPacks"; // Replace with window.location.pathname.split("/")[1];
 		defaultFetchUrl = "https://api.github.com/repos/"+repositoryUsername+"/"+repositoryName+"/git/trees/master:src?recursive=3";
 		defaultFileUrl = "https://raw.githubusercontent.com/"+repositoryUsername+"/"+repositoryName+"/master/src/"
+		reportUrl = "https://github.com/"+repositoryUsername+"/"+repositoryName+"/issues/";
 		// This info is only used to make 'dynamic' fetch calls.
 		
 		var gameList = {};
@@ -30,32 +31,49 @@
 			this.overwriteFormat = [undefined, 0, 0];
 		}
 		
-		function addGameList(folderName, gameTitle) { // Use template to add a new game entry to the list. The passed variables will change the result.
-			gameListTemplate = document.querySelector('#gameListTemplate');
-			gameListTemplate.content.querySelector('input').id=folderName;
-			gameListTemplate.content.querySelector('label').htmlFor=folderName;
-			gameListTemplate.content.querySelector('label').innerText=gameTitle[0]; // The first search tag should always be the game name.
-			gameListTemplate.content.querySelector('div').dataset.searchtags=JSON.stringify(gameTitle); // Store all the tags in an attribute.
+		function generateReportIssueUrl(title, body) {
+			return reportUrl+"new?title="+title+"&body="+body;
+		}
+		
+		function addGameList(folderName, gameTitle) { // Using templates to add new game entries.
+			document.getElementById("gameList").appendChild(document.importNode(document.querySelector('#gameEntryTemplate').content, true));
 			
-			document.getElementsByName("selectGames")[0].appendChild(document.importNode(gameListTemplate.content, true));
+			currentGameTemplate = document.getElementById("input_folderName").parentElement;
+			currentGameTemplate.getElementsByTagName("input")[0].id="input_"+folderName;
+			currentGameTemplate.getElementsByTagName("input")[0].name=folderName;
+			currentGameTemplate.getElementsByTagName("label")[0].htmlFor="input_"+folderName;
+			currentGameTemplate.getElementsByTagName("label")[0].innerText=gameTitle[0]; // The first name tag should always be the game name.							 
+			
+			// Try to avoid name overflows by approximately calculating the length and optionally change it's listed title.
+			if (document.getElementsByName("selectGames")[0].offsetWidth < currentGameTemplate.getElementsByTagName("label")[0].offsetWidth) {
+				if (gameTitle.length > 0) currentGameTemplate.getElementsByTagName("label")[0].innerText=gameTitle[1]; // Always use the second name tag.
+			}
 		}
 		
 		function filterGameList(searchString) {
-			gameNodes = document.getElementsByClassName("gameList");
 			searchResults = 0;
-			for (i=0; i<gameNodes.length; i++) { // Cycle through all of the games
-				for (j=0; j<JSON.parse(gameNodes[i].dataset.searchtags).length; j++) { // Cycle trough each of the search tags
-					if (JSON.parse(gameNodes[i].dataset.searchtags)[j].toUpperCase().indexOf(searchString.value.toUpperCase()) > -1) {
-						gameNodes[i].style.display = ""; // Found matching search tag.
+			if (searchString.value.toLowerCase().indexOf("mario od")>-1) document.getElementById("logo").innerText="SwEmu Graphic Packs"; // 'ha funny'
+			for (var game in gameList) {
+				for (i=0; i < gameList[game].searchTags.length; i++) {
+					// Now compare it with the search string
+					if (gameList[game].searchTags[i].toLowerCase().indexOf(searchString.value.toLowerCase()) > -1) {
+						document.getElementsByName(game)[0].parentElement.style="";
 						searchResults += 1;
-						break; // Break and continue to check for other games.
+						break; // Found 1 tag that matched. Quit looping this game entry.
 					}
 					else {
-						gameNodes[i].style.display = "none"; // Hide game from the list, but it next search tag might reveal it.
+						document.getElementsByName(game)[0].parentElement.style="display: none;";
 					}
 				}
 			}
-			console.log("Received "+searchResults+" search results.");
+			if (searchResults === 0) {
+				// Show no search results message.
+				document.getElementById("noSearchResults").style="";
+				document.getElementById("searchIssueUrl").href=generateReportIssueUrl("[Missing] "+searchString.value+" graphic pack","The website couldn't resolve or find a graphic packs if I searched for '"+searchString.value+"'. This shouldn't be the case as it runs on Cemu [include screenshot link]. Maybe it just needs to be added as a search tag and could be found with some other tags. Thanks for checking!");
+			}
+			else {
+				document.getElementById("noSearchResults").style="display: none;";
+			}
 		}
 		
 		function showLoad() {
@@ -208,6 +226,11 @@
 				console.warn("Fetch isn't supported (yet) for your browser. If you get this error, your browser isn't yet supported by this website.");
 			}
 		}
+		
+		function continueToSettings() {
+			console.debug("Going to the graphic pack settings...");
+		}
+		
 		listGames(defaultFetchUrl);
 	</script>
 	<!-- <<< End Javascript >>> -->
@@ -217,26 +240,26 @@
 		<a id="logo" href="/index.html">Cemu Graphic Packs</a>
 		<nav>
 			<ul class="progressBar">
-				<li><a id="progressBar1" href="#">Download Graphic Packs</a></li>
-				<li><a id="progressBar2" href="#">Select additional packs</a></li>
+				<li><a id="progressBar1" href="#">Select games</a></li>
+				<li><a id="progressBar2" href="#">Select your Graphic Pack Settings</a></li>
 			</ul>
 		</nav>
 	</header>
 	
 	<main>
-		<form name="selectGames" enctype="text/plain">
-			<p>Select a few of these graphic packs!<br></p>
+		<form name="selectGames">
+			<p>Select the games you want to be improved<br></p>
 			<input type="search" id="searchGames" placeholder="Search games..." oninput="filterGameList(this)">
-			
-			<template id="gameListTemplate">
-				<div class="gameList" data-searchtags="arraySearchTags">
-					<input type="checkbox" id="folderName" name="game">
-					<label for="folderName">gameTitle</label>
-				</div>
-			</template>
-			
-			<script>
-			</script>
+			<div id="gameList">
+				<template id="gameEntryTemplate">
+					<div class="gameEntry">
+						<input type="checkbox" id="input_folderName" name="folderName" class="checkbox">
+						<label for="input_folderName">gameTitle</label>
+					</div>
+				</template>
+			</div>
+			<p id="noSearchResults" style="display: none;"><strong>No such thing could be found.</strong><br> Make sure you typed it correctly. Are you sure that it's both a native Wii U title and that it runs on Cemu?<br><br> If you're sure that it runs and this repository doesn't have <strong>any</strong> graphic pack for it, you can <a href="" id="searchIssueUrl">create a Github Issue</a> about it here and kindly ask someone. You can also <a href="https://github.com/slashiee/cemu_graphic_packs/wiki/How-to-create-Graphic-Packs">make your own graphic pack</a> with the help of the guide.</p>
+			<input type="button" value="Continue" onClick="continueToSettings();" id="continueButton">
 		</form>
 	</main>
 	
