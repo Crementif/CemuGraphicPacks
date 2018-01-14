@@ -7,16 +7,13 @@ body, html {
 
 body {
 	display: flex;
-	font-family: Roboto;
+	font-family: "Roboto";
 	flex-direction: column;
 	color: #616161;
 	background-color: #f5f5f5;
-	margin:auto;
+	margin: auto;
 }
 
-.hidden {
-	display: none;
-}
 /* >>> Header <<< */
 header {
 	display: flex;
@@ -71,7 +68,6 @@ main {
 
 form {
 	display: inline-block;
-	max-height: 77vh;
 	width: 400px;
 	box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
 	padding: 8px;
@@ -79,12 +75,10 @@ form {
 
 form div {
 	max-height: 56vh;
-	overflow-y: auto;
+	overflow-x: auto;
 }
 
 form div div { /* Each game in the game selection list */
-	max-height: 60vh;
-	overflow-x: hidden;
 	white-space: nowrap; /*Wrap text if there's no shortening in the case there's no shortening*/
 	text-overflow: ellipsis;
 	border-bottom: 1px solid #E0E0E0;
@@ -137,10 +131,6 @@ footer {
 	flex-shrink: 0;
 	padding: 10px;
 	min-height: 40px;
-					
-										
-									   
-				
 }
 
 footer span {
@@ -165,16 +155,11 @@ footer > strong {
 }
 
 /*Cookie warning*/
-#cookieWarn {
-	margin: auto;
+#localstorageWarning {
+	margin: 20px auto 3px;
 }
 
-#cookieWarn strong {
-	margin: 10px;
+#localstorageWarning strong {
+	margin-left: 10px;
 	cursor: pointer;
-}
-
-#cookieWarn span {
-	text-shadow: 1px 1px #616161;
-	margin-left: 40px;
 }

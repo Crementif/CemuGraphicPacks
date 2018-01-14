@@ -250,6 +250,7 @@
 		<form name="selectGames">
 			<p>Select the games you want to be improved<br></p>
 			<input type="search" id="searchGames" placeholder="Search games..." oninput="filterGameList(this)">
+			
 			<div id="gameList">
 				<template id="gameEntryTemplate">
 					<div class="gameEntry">
@@ -258,20 +259,29 @@
 					</div>
 				</template>
 			</div>
-			<p id="noSearchResults" style="display: none;"><strong>No such thing could be found.</strong><br> Make sure you typed it correctly. Are you sure that it's both a native Wii U title and that it runs on Cemu?<br><br> If you're sure that it runs and this repository doesn't have <strong>any</strong> graphic pack for it, you can <a href="" id="searchIssueUrl">create a Github Issue</a> about it here and kindly ask someone. You can also <a href="https://github.com/slashiee/cemu_graphic_packs/wiki/How-to-create-Graphic-Packs">make your own graphic pack</a> with the help of the guide.</p>
+			
+			<p id="noSearchResults" style="display: none;">
+				<strong>No such thing could be found.</strong><br> Make sure you typed it correctly. Are you sure that it's both a native Wii U title and that it runs on Cemu?<br><br> If you're sure that it runs and this repository doesn't have <strong>any</strong> graphic pack for it, you can <a href="" id="searchIssueUrl">create a Github Issue</a> about it here and kindly ask someone. You can also <a href="https://github.com/slashiee/cemu_graphic_packs/wiki/How-to-create-Graphic-Packs">make your own graphic pack</a> with the help of the guide.
+			</p>
+			
 			<input type="button" value="Continue" onClick="continueToSettings();" id="continueButton">
 		</form>
 	</main>
-	
+	<div id="localstorageWarning">
+		This site uses localstorage for storing previous selections and other features. Do you want store your choices? You can change this choice in the settings.
+		<span>
+			<strong onClick="localStorage.setItem('localstoragePref', 'true'); document.getElementById('localstorageWarning').style='display: none';">Sure</strong>
+			<strong onClick="document.getElementById('localstorageWarning').style='display: none';">Nope</strong>
+		</span>
+		<script>
+			if (localStorage.getItem("localstoragePref")==="true" || navigator.doNotTrack==="1") {
+				document.getElementById("localstorageWarning").style="display: none;";
+			}
+		</script>
+	</div>
 	<footer>
-		<div id="cookieWarn">
-			This site uses cookies for features (e.g. remembering previous downloaded packs to show updates). It doesn't get shared, but thought you'd like a warning. It's your computer after all. You can always change this in the settings.
-			<span>
-				<strong>Sure</strong><strong>Nope</strong>
-			</span>
-		</div>
-  		<strong class="hidden">Settings</strong>
-		<span class="hidden">
+		<strong>Settings</strong>
+		<span>
 			<a href="">Help us over on github!</a>
 			<a href="">Site not working?</a>
 			<a href="">Graphic packs for Cemu&lt;1.8.0</a>
