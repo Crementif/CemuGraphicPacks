@@ -66,6 +66,13 @@ main {
 	align-items: center;
 }
 
+#settingsSection {
+	background-color: aqua;
+	margin-left: 100px;
+	width: 500px;
+	max-height: 56vh;
+}
+
 form {
 	display: inline-block;
 	width: 400px;

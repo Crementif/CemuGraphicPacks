@@ -266,15 +266,18 @@
 			
 			<input type="button" value="Continue" onClick="continueToSettings();" id="continueButton">
 		</form>
+		<div id="settingsSection">
+			<h2>Game Title here.</h2>
+		</div>
 	</main>
 	<div id="localstorageWarning">
 		This site uses localstorage for storing previous selections and other features. Do you want store your choices? You can change this choice in the settings.
 		<span>
 			<strong onClick="localStorage.setItem('localstoragePref', 'true'); document.getElementById('localstorageWarning').style='display: none';">Sure</strong>
-			<strong onClick="document.getElementById('localstorageWarning').style='display: none';">Nope</strong>
+			<strong onClick="localStorage.setItem('localstoragePref', 'false'); document.getElementById('localstorageWarning').style='display: none';">Nope</strong>
 		</span>
 		<script>
-			if (localStorage.getItem("localstoragePref")==="true" || navigator.doNotTrack==="1") {
+			if (typeof localStorage.getItem("localstoragePref")==="string" || navigator.doNotTrack==="1") {
 				document.getElementById("localstorageWarning").style="display: none;";
 			}
 		</script>
