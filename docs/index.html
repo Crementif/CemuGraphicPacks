@@ -16,6 +16,7 @@
 		// This info is only used to make 'dynamic' fetch calls.
 		
 		var gameList = {};
+		var selected = false;
 		function textureRule(sectionName) {
     		this.sectionName = sectionName;
 			// Filters
@@ -228,7 +229,31 @@
 		}
 		
 		function continueToSettings() {
-			console.debug("Going to the graphic pack settings...");
+			if (selected) {
+				console.debug("Going to the graphic pack settings...");
+			}
+		}
+		function hoverAction(hovering) {
+			if (hovering) {
+				for (var i = 0; i < document.getElementsByClassName("checkbox").length; i++) {
+					if (document.getElementsByClassName("checkbox")[i].checked) {
+						document.getElementById("continueButton").style="background-color: rgba(158,158,158,.3);";
+						selected = true;
+						return false;
+					}
+				}
+			}
+			selected = false;
+			document.getElementById("continueButton").style="background-color: rgba(158,158,158,.2);";
+		}
+		
+		function changePreviewSize() {
+			if (document.getElementById("options").scrollTop > 10) {
+				document.getElementById("settingsSection").className="minimized";
+			}
+			else {
+				document.getElementById("settingsSection").className="maximized";
+			}
 		}
 		
 		listGames(defaultFetchUrl);
@@ -264,10 +289,23 @@
 				<strong>No such thing could be found.</strong><br> Make sure you typed it correctly. Are you sure that it's both a native Wii U title and that it runs on Cemu?<br><br> If you're sure that it runs and this repository doesn't have <strong>any</strong> graphic pack for it, you can <a href="" id="searchIssueUrl">create a Github Issue</a> about it here and kindly ask someone. You can also <a href="https://github.com/slashiee/cemu_graphic_packs/wiki/How-to-create-Graphic-Packs">make your own graphic pack</a> with the help of the guide.
 			</p>
 			
-			<input type="button" value="Continue" onClick="continueToSettings();" id="continueButton">
+			<input type="button" value="Continue" onMouseOver="hoverAction(true);" onMouseOut="hoverAction(false);" onClick="continueToSettings();" id="continueButton">
 		</form>
-		<div id="settingsSection">
-			<h2>Game Title here.</h2>
+		<div id="settingsSection" class="maximized">
+			<h2 id="GameTitle">Game Title here.</h2>
+			<div id="preview">
+			</div>
+			<div id="options" onScroll="changePreviewSize();">
+				<p>Scoll</p>
+				<p>Hey</p>
+				<p>Now</p>
+				<p>Scoll</p>
+				<p>Hey</p>
+				<p>Now</p>
+				<p>Scoll</p>
+				<p>Hey</p>
+				<p>Now</p>
+			</div>
 		</div>
 	</main>
 	<div id="localstorageWarning">
