@@ -122,7 +122,12 @@ form #noSearchResults {
 }
 
 /* Settings */
-#settingsSection {
+#settingsSection { /*Hide state*/
+	display: none;
+}
+
+#settingsSection.maximized, #settingsSection.minimized {
+	display: inline-block;
 	position: relative;
 	padding: 4px 12px 12px;
 	width: 500px;
@@ -135,8 +140,14 @@ form #noSearchResults {
 	background-color: #3AEDCF;
 }
 
+#settingsSection #options {
+	padding: 6px 0px 12px 14px;
+	overflow-y: auto;
+}
+
+
 #settingsSection > * {
-	transition-name: height, width, font-size, display;
+	transition-name: height, width, font-size;
 	transition-duration: 1s;
 }
 
@@ -153,16 +164,16 @@ form #noSearchResults {
 }
 
 #settingsSection.minimized #preview {
-	position: absolute;
-	right: 40px;
 	width: 240px;
 	height: 135px;
 }
 
-#settingsSection #options {
-	padding: 6px 0px 12px 14px;
+#settingsSection.maximized #options {
 	max-height: 20vh;
-	overflow-y: auto;
+}
+
+#settingsSection.minimized #options {
+	max-height: 20em;
 }
 
 /* <<< End Main >>> */

@@ -43,7 +43,7 @@
 			currentGameTemplate.getElementsByTagName("input")[0].id="input_"+folderName;
 			currentGameTemplate.getElementsByTagName("input")[0].name=folderName;
 			currentGameTemplate.getElementsByTagName("label")[0].htmlFor="input_"+folderName;
-			currentGameTemplate.getElementsByTagName("label")[0].innerText=gameTitle[0]; // The first name tag should always be the game name.							 
+			currentGameTemplate.getElementsByTagName("label")[0].innerText=gameTitle[0]; // The first name tag should always be the game name.
 			
 			// Try to avoid name overflows by approximately calculating the length and optionally change it's listed title.
 			if (document.getElementsByName("selectGames")[0].offsetWidth < currentGameTemplate.getElementsByTagName("label")[0].offsetWidth) {
@@ -130,7 +130,7 @@
 							gameList[currentGame][treeEntry.path].push([textureRule.width, textureRule.overwriteWidth[1], textureRule.overwriteWidth[2]]);
 						}
 						if (textureRule.overwriteHeight[0]=="auto") {
-							gameList[currentGame][treeEntry.path].push([textureRule.height, textureRule.overwriteWidth[1], textureRule.overwriteWidth[2]]);
+							gameList[currentGame][treeEntry.path].push([textureRule.height, textureRule.overwriteHeight[1], textureRule.overwriteHeight[2]]);
 						}
 						if (textureRule.overwriteFormat[0]=="unimplemented") {
 							// Implement overwriteFormat features too depending if it's necessairy in any way...
@@ -228,23 +228,53 @@
 			}
 		}
 		
+		function showGame(labelClicked) {
+			currentTitle = gameList[labelClicked.previousElementSibling.name];
+			currentRules = currentTitle[labelClicked.previousElementSibling.name+"/rules.txt"];
+			document.getElementById("GameTitle").innerText=currentTitle.gameTitle;
+			document.getElementById("options").innerHTML="";
+			for (i=0; i < currentRules.length; i++) {
+				var para = document.createElement("p");
+				var node = document.createTextNode("Texture rule with res: "+currentRules[i][0]+", which index is "+currentRules[i][1]+" with a length of "+currentRules[i][2]+".");
+				
+				para.appendChild(node);
+				document.getElementById("options").appendChild(para);
+			}
+			document.getElementById("options").innerHTML+="<br><br><p>Scoll</p><p>Hey</p><p>Now</p><p>Scoll</p><p>Hey</p><p>Now</p><p>This is just some some text</p><p>that is made to show off the scrolling feature.</p>";
+			document.getElementById("settingsSection").className="maximized";
+		}
+		
 		function continueToSettings() {
 			if (selected) {
 				console.debug("Going to the graphic pack settings...");
+				document.getElementById("continueButton").value="Go back";
+				document.getElementById("actionTitle").innerText="Select a game to view it's options.";
+				// Go to the next stage
+				for (i=0; i<document.getElementsByClassName("checkbox").length; i++) {
+					if (!document.getElementsByClassName("checkbox")[i].checked) {
+						document.getElementsByClassName("checkbox")[i].parentElement.style="display: none;";
+					}
+					else if (document.getElementsByClassName("checkbox")[i].checked) {
+						document.getElementsByClassName("checkbox")[i].nextElementSibling.onclick=function() {showGame(this)};
+
+					}
+					document.getElementsByClassName("checkbox")[i].style="display: none;";
+				}
 			}
 		}
 		function hoverAction(hovering) {
 			if (hovering) {
-				for (var i = 0; i < document.getElementsByClassName("checkbox").length; i++) {
+				for (var i=0; i < document.getElementsByClassName("checkbox").length; i++) {
 					if (document.getElementsByClassName("checkbox")[i].checked) {
 						document.getElementById("continueButton").style="background-color: rgba(158,158,158,.3);";
 						selected = true;
-						return false;
+						return true;
 					}
 				}
 			}
 			selected = false;
 			document.getElementById("continueButton").style="background-color: rgba(158,158,158,.2);";
+			return false;
 		}
 		
 		function changePreviewSize() {
@@ -273,7 +303,7 @@
 	
 	<main>
 		<form name="selectGames">
-			<p>Select the games you want to be improved<br></p>
+			<p id="actionTitle">Select the games you want to be improved<br></p>
 			<input type="search" id="searchGames" placeholder="Search games..." oninput="filterGameList(this)">
 			
 			<div id="gameList">
@@ -291,7 +321,7 @@
 			
 			<input type="button" value="Continue" onMouseOver="hoverAction(true);" onMouseOut="hoverAction(false);" onClick="continueToSettings();" id="continueButton">
 		</form>
-		<div id="settingsSection" class="maximized">
+		<div id="settingsSection">
 			<h2 id="GameTitle">Game Title here.</h2>
 			<div id="preview">
 			</div>
@@ -303,9 +333,8 @@
 				<p>Hey</p>
 				<p>Now</p>
 				<p>Scoll</p>
-				<p>Hey</p>
-				<p>Now</p>
 			</div>
+			<p><strong>This is mostly random information, which shows the parsing system which will create the graphic packs!</strong></p>
 		</div>
 	</main>
 	<div id="localstorageWarning">
