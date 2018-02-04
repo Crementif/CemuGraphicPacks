@@ -108,7 +108,7 @@ form #searchGames {
 	display: inline-flex;
 	cursor: pointer;
 	outline: 0;
-	margin: 16px 0px;
+	margin: 6px 0px;
 	width: 14px;
 	height: 14px;
 	border: 2px solid rgba(0, 0, 0, 0.54);
@@ -118,10 +118,6 @@ form #searchGames {
 
 .checkbox:checked {
 	background-color: rgb(51, 122, 183);
-}
-
-.checkbox:checked::after {
-	
 }
 
 
