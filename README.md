@@ -14,3 +14,6 @@ https://crementif.github.io/CemuGraphicPacks/
 ######
 * Better documentation
 * More features/pages to make/assist graphic packs
+
+#### Credits
+* [JSZip](http://stuk.github.io/jszip/) - [License](https://github.com/Stuk/jszip/blob/master/LICENSE.markdown)

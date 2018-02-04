@@ -114,6 +114,7 @@ form #searchGames {
 	border: 2px solid rgba(0, 0, 0, 0.54);
 	border-radius: 2px;
 	transition: background 0.05s;
+	transition: border-color 3s;
 }
 
 .checkbox:checked {
@@ -134,8 +135,57 @@ form #searchGames {
 	color: #18bc9c;
 }
 
+
+
+#nextButton:hover {
+	background-color: rgba(158,158,158,.3);
+}
+
 form #noSearchResults {
 	text-align: center;
+}
+
+#noSelectionText {
+	color: red;
+	position: relative;
+	opacity: 0.0;
+	top: 15px;
+	font-weight: bold;
+	transition: 3s;
+}
+
+@keyframes noSelectionText {
+	0% {
+		opacity: 0.0;
+	}
+	100% {
+		opacity: 1.0;
+	}
+}
+
+.noSelectionText {
+	/*Animation*/
+	animation-name: noSelectionText;
+	animation-duration: 1.5s;
+	animation-direction: alternate;
+	animation-iteration-count: 2;
+}
+
+@keyframes noSelectionCheckbox {
+	0% {
+		border-color: rgba(0, 0, 0, 0.54);
+	}
+	100% {
+		border-color: red;
+	}
+}
+
+#gameList.noSelectionCheckbox .checkbox {
+	/*Animation*/
+	animation-name: noSelectionCheckbox;
+	animation-duration: 1.5s;
+	animation-direction: alternate;
+	animation-iteration-count: 2;
 }
 
 /* Settings */
@@ -162,16 +212,24 @@ form #noSearchResults {
 	overflow-y: auto;
 }
 
+#gameTitle {
+	white-space: pre;
+}
+
+#gameLinks {
+	
+}
+
 
 #settingsSection > * {
 	transition-name: height, width, font-size;
 	transition-duration: 1s;
 }
 
-#settingsSection.maximized #GameTitle {
+#settingsSection.maximized #gameTitle {
 	font-size: 1.5em;
 }
-#settingsSection.minimized #GameTitle {
+#settingsSection.minimized #gameTitle {
 	font-size: 1.0em;
 }
 
@@ -190,7 +248,7 @@ form #noSearchResults {
 }
 
 #settingsSection.minimized #options {
-	max-height: 20em;
+	max-height: 18em;
 }
 
 /* <<< End Main >>> */
