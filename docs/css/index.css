@@ -105,6 +105,7 @@ form #searchGames {
 /*Custom checkboxes?*/
 .checkbox {
 	-webkit-appearance: none;
+	display: inline-flex;
 	cursor: pointer;
 	outline: 0;
 	margin: 16px 0px;
