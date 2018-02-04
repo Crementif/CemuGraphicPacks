@@ -5,6 +5,22 @@
 	<title>Cemu Graphic Packs</title>
 	<link rel="stylesheet" type="text/css" href="css/index.css">
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<meta name="theme-color" content="#2c3e50"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<!-- >>> Meta <<< -->
+	<meta name="twitter:card" content="summary"/>
+	<meta name="twitter:title" content="Cemu Graphic Packs"/>
+	<meta name="twitter:description" content="Community Made Graphic Packs for Cemu."/>
+	<meta name="twitter:image" content="Meta-Image.png"/>
+	<meta property="og:title" content="Cemu Graphic Packs"/>
+	<meta property="og:type" content="website"/>
+	<meta property="og:url" content="http://www.imdb.com/title/tt0117500/"/>
+	<meta property="og:image" content="Meta-Image.png"/>
+	<meta name="application-name" content="Cemu Graphic Packs Configurator">
+	<meta name="description" content="Community Made Graphic Packs for Cemu.">
+	<meta name="keywords" content="Cemu, Wii U, Graphic Pack, Modification, Upscale, Games, Community">
 	<!-- >>> Javascript functions <<< -->
 	<script>
 		// Calculate Github repository info, avoid using extra api calls.
@@ -318,7 +334,7 @@
 				<strong>No such thing could be found.</strong><br> Make sure you typed it correctly. Are you sure that it's both a native Wii U title and that it runs on Cemu?<br><br> If you're sure that it runs and this repository doesn't have <strong>any</strong> graphic pack for it, you can <a href="" id="searchIssueUrl">create a Github Issue</a> about it here and kindly ask someone. You can also <a href="https://github.com/slashiee/cemu_graphic_packs/wiki/How-to-create-Graphic-Packs">make your own graphic pack</a> with the help of the guide.
 			</p>
 			
-			<input type="button" value="Continue" onMouseOver="hoverAction(true);" onMouseOut="hoverAction(false);" onClick="continueToSettings();" id="continueButton">
+			<input type="button" class="button" id="continueButton" value="Continue" onMouseOver="hoverAction(true);" onMouseOut="hoverAction(false);" onClick="continueToSettings();"/>
 		</form>
 		<div id="settingsSection">
 			<h2 id="GameTitle">Game Title here.</h2>
@@ -326,7 +342,7 @@
 			</div>
 			<div id="options" onScroll="changePreviewSize();">
 			</div>
-			<p><strong>This is mostly random information, which shows the parsing system which will create the graphic packs!</strong></p>
+			<input type="button" id="nextButton" value="Next Game" onMouseOver="hoverAction(true);" onMouseOut="hoverAction(false);" onClick="nextGame();"/>
 		</div>
 	</main>
 	<div id="localstorageWarning">

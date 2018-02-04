@@ -1,7 +1,7 @@
 @charset "utf-8";
 /* CSS Document */
 
-body, html {
+html, body {
 	height: 100%;
 }
 
@@ -103,8 +103,28 @@ form #searchGames {
 }
 
 /*Custom checkboxes?*/
+.checkbox {
+	-webkit-appearance: none;
+	cursor: pointer;
+	outline: 0;
+	margin: 16px 0px;
+	width: 14px;
+	height: 14px;
+	border: 2px solid rgba(0, 0, 0, 0.54);
+	border-radius: 2px;
+	transition: background 0.05s;
+}
 
-form #continueButton {
+.checkbox:checked {
+	background-color: rgb(51, 122, 183);
+}
+
+.checkbox:checked::after {
+	
+}
+
+
+.button {
 	margin: 10px 16px 2px;
 	height: 36px;
 	float: right;
