@@ -3,7 +3,7 @@ titleIds = 000500001010AC00,0005000010111000
 name = "Ben 10: Omniverse"
 ## nativeRes = 720
 ## searchTags = []
-## compatWiki = "http://compat.cemu.info/wiki/Ben_10:_Omniverse"
+## gameId = ["ABEEG9","ABEPAF","ABVEG9","ABVPAF"]
 
 [TextureRedefine] # TV upscaling
 width = 1280

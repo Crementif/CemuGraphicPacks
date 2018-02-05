@@ -3,7 +3,7 @@ titleIds = 00050000101A9E00,00050000101A9C00
 name = "Chompy Chomp Chomp Party"
 ## nativeRes = 720
 ## searchTags = []
-## compatWiki = "http://compat.cemu.info/wiki/Chompy_Chomp_Chomp_Party"
+## gameId = ["BCHE","BCHP"]
 
 [TextureRedefine] # TV upscaling
 width = 1280

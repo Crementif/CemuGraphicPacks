@@ -3,7 +3,7 @@ titleIds = 0005000010197300
 name = "Electronic Super Joy: Groove City"
 ## nativeRes = 1080
 ## searchTags = []
-## compatWiki = "http://compat.cemu.info/wiki/Electronic_Super_Joy:_Groove_City"
+## gameId = ["BESE"]
 
 [TextureRedefine] # TV upscaling
 width = 1920

@@ -1,9 +1,9 @@
 [Definition]
 titleIds = 00050000101AC700,00050000101AFE00
-name = "Adventure Time Finn And Jake Investigations"
+name = "Adventure Time: Finn And Jake Investigations"
 ## nativeRes = 720
 ## searchTags = ["Adventure Time 4"]
-## compatWiki = "http://compat.cemu.info/wiki/Adventure_Time:_Explore_the_Dungeon_Because_I_Don%27t_Know!"
+## gameId = ["BFNEVZ","BFNPVZ"]
 
 [TextureRedefine] # TV upscaling
 width = 1280

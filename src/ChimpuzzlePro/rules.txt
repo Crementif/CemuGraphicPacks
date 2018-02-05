@@ -3,7 +3,7 @@ titleIds = 000500001014DD00
 name = "Chimpuzzle Pro"
 ## nativeRes = 1080
 ## searchTags = []
-## compatWiki = "http://compat.cemu.info/wiki/Chimpuzzle_Pro"
+## gameId = ["WCPP"]
 
 [TextureRedefine] # TV upscaling
 width = 1920

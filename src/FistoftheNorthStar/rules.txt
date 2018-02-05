@@ -3,7 +3,7 @@ titleIds = 0005000010116600
 name = "Fist of the North Star: Ken's Rage 2"
 ## nativeRes = 720
 ## searchTags = []
-## compatWiki = "http://compat.cemu.info/wiki/Fist_of_the_North_Star:_Ken%27s_Rage_2"
+## gameId = ["AH9JC8","AH9E","AH9P"]
 
 [TextureRedefine] # TV upscaling
 width = 1280

@@ -1,9 +1,9 @@
 [Definition]
 titleIds = 0005000010129000,0005000010129200
-name = "DuckTales Remastered"
+name = "DuckTales: Remastered"
 ## nativeRes = 1080
 ## searchTags = []
-## compatWiki = "http://compat.cemu.info/wiki/DuckTales:_Remastered"
+## gameId = ["WDKE08","WDKP08","WDKE","WDKP"]
 
 [TextureRedefine] # TV upscaling
 width = 1920

@@ -3,7 +3,7 @@ titleIds = 0005000010180600,0005000010180700,0005000010180500
 name = "Captain Toad: Treasure Tracker"
 ## nativeRes = 720
 ## searchTags = ["CT:TT"]
-## compatWiki = "http://compat.cemu.info/wiki/Captain_Toad:_Treasure_Tracker"
+## gameId = ["AKBE01","AKBJ01","AKBP01"]
 
 [TextureRedefine] # TV upscaling
 width = 1280

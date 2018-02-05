@@ -3,7 +3,7 @@ titleIds = 000500001F600900,000500001F600A00,000500001F600B00
 name = "Paper Mario: Color Splash"
 ## nativeRes = 720
 ## searchTags = ["Paper Mario 5"]
-## compatWiki = "http://compat.cemu.info/wiki/Paper_Mario:_Color_Splash"
+## gameId = ["CNFE01","CNFJ01","CNFP01"]
 ## h264 = true
 
 [TextureRedefine] # TV upscaling

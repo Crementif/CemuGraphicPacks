@@ -3,7 +3,7 @@ titleIds = 000500001019AE00,00050000101A2C00
 name = "Family Tennis SP"
 ## nativeRes = 720
 ## searchTags = []
-## compatWiki = "http://compat.cemu.info/wiki/Family_Tennis_SP"
+## gameId = ["WLKE","WLKP"]
 
 [TextureRedefine] # TV upscaling
 width = 1280

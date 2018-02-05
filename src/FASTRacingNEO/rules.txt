@@ -3,7 +3,7 @@ titleIds = 000500001012f000
 name = "FAST Racing NEO"
 ## nativeRes = 720
 ## searchTags = []
-## compatWiki = "http://compat.cemu.info/wiki/Fast_Racing_Neo"
+## gameId = ["BR5PJX","WFSE","WFSJ","WFSP"]
 
 [TextureRedefine] # TV upscaling
 width = 1280

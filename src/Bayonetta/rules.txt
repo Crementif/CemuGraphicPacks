@@ -3,7 +3,7 @@ titleIds = 000500001014DB00,0005000010157E00,0005000010157F00
 name = "Bayonetta"
 ## nativeRes = 720
 ## searchTags = ["Bayonetta 1"]
-## compatWiki = "http://compat.cemu.info/wiki/Bayonetta"
+## gameId = ["AAFD01","AAFE01","AAFJ01"]
 ## h264 = true
 
 [TextureRedefine] # TV upscaling

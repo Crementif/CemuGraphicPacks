@@ -3,7 +3,7 @@ titleIds = 0005000010205F00
 name = "Aqua TV"
 ## nativeRes = 720
 ## searchTags = ["Aquarium"]
-## compatWiki = "http://compat.cemu.info/wiki/Aqua_TV"
+## gameId = []
 
 [TextureRedefine] # TV upscaling
 width = 1280
