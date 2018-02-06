@@ -75,16 +75,16 @@ form {
 	padding: 8px;
 }
 
-form div {
+form #gameList {
 	max-height: 56vh;
+	padding: 3px 0px;
 	overflow-x: auto;
 }
 
-form div div { /* Each game in the game selection list */
+form #gameList .gameEntry { /* Each game in the game selection list */
 	white-space: nowrap; /*Wrap text if there's no shortening in the case there's no shortening*/
 	text-overflow: ellipsis;
-	border-bottom: 1px solid #E0E0E0;
-	padding: 3px;
+	padding: 0px 3px;
 }
 
 form p {
@@ -101,6 +101,36 @@ form #searchGames {
 	margin: 0px 0px 6px !important;
 	border-radius: 3px;
 }
+
+main:not(.selectOptions) .clickLabel {
+	display: none !important;
+}
+
+main:not(.selectOptions) div div {
+	border-bottom: 1px solid #E0E0E0;
+}
+
+/*Second stage CSS*/
+form .clickLabel {
+	cursor: pointer;
+	padding-left: 18px;
+}
+
+.clickLabel+.custom:before {
+	color: #18bc9c;
+	padding-right: 4px;
+	content: "\2714";
+}
+
+main.selectOptions .checkbox, main.selectOptions label { /*Hide not selected checkboxes with labels display: block;*/
+	display: none;
+}
+
+.checkbox:not(:checked) ~ .clickLabel {
+	display: none;
+}
+
+
 
 /*Custom checkboxes?*/
 .checkbox {
@@ -123,6 +153,7 @@ form #searchGames {
 
 
 .button {
+	cursor: pointer;
 	margin: 10px 16px 2px;
 	height: 36px;
 	float: right;
@@ -134,8 +165,6 @@ form #searchGames {
 	box-shadow: 0 2px 2px rgba(0,0,0,.12);
 	color: #18bc9c;
 }
-
-
 
 #nextButton:hover {
 	background-color: rgba(158,158,158,.3);
@@ -222,7 +251,7 @@ form #noSearchResults {
 
 
 #settingsSection > * {
-	transition-name: height, width, font-size;
+	transition-property: height, width, font-size;
 	transition-duration: 1s;
 }
 
