@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 /* CSS Document */
 
 html, body {
@@ -102,8 +102,21 @@ form #searchGames {
 	border-radius: 3px;
 }
 
+#downloadButton {
+    background-color: #18bcaf;
+    color: #e4e4e4;
+}
+
+#downloadButton:hover {
+    background-color: #00ab9d;
+}
+
 main:not(.selectOptions) .clickLabel {
-	display: none !important;
+	display: none;
+}
+
+main:not(.selectOptions) #downloadButton {
+    display: none;
 }
 
 main:not(.selectOptions) div div {
@@ -134,17 +147,18 @@ main.selectOptions .checkbox, main.selectOptions label { /*Hide not selected che
 
 /*Custom checkboxes?*/
 .checkbox {
-	-webkit-appearance: none;
-	display: inline-flex;
-	cursor: pointer;
-	outline: 0;
-	margin: 6px 0px;
-	width: 14px;
-	height: 14px;
-	border: 2px solid rgba(0, 0, 0, 0.54);
-	border-radius: 2px;
-	transition: background 0.05s;
-	transition: border-color 3s;
+    -webkit-appearance: none;
+    display: inline-flex;
+    cursor: pointer;
+    outline: 0;
+    margin: 6px 0px;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0, 0, 0, 0.54);
+    border-radius: 2px;
+    transition-property: background-color;
+    transition-duration: 0.1s;
+    transition: border-color 3s;
 }
 
 .checkbox:checked {

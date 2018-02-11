@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
 	<meta charset="utf-8">
@@ -30,18 +30,21 @@
 		var gameList = {};
 		var selected = false;
 		function textureRule(sectionName) {
-    		this.sectionName = sectionName;
+            this.sectionName = sectionName;
+            // MISC
+            this.vsyncFrequency = null;
 			// Filters
-   			this.width = null;
-    		this.height = null;
-    		this.formats = null;
-			this.formatsExcluded = null;
-			this.tilemodes = null;
-			this.tilemodesExcluded = null;
+            this.width = undefined;
+            this.height = undefined;
+            this.formats = undefined;
+            this.formatsExcluded = undefined;
+            this.tilemodes = undefined;
+			this.tilemodesExcluded = undefined;
 			// Overwrites
+            // An 'instruction' requires a instructionType, followed by the index and length of the characters from the file.
 			this.overwriteWidth = [undefined, 0, 0];
 			this.overwriteHeight = [undefined, 0, 0];
-			this.overwriteFormat = [undefined, 0, 0];
+            this.overwriteFormat = [undefined, 0, 0];
 		}
 		
 		function generateReportIssueUrl(title, body) {
@@ -117,20 +120,24 @@
 			})
 		}
 		
-		function fetchJson(jsonUrl) { // Async, returns Promise.
+		function fetchGithubJson(jsonUrl) { // Async, returns Promise.
 			return fetchUrl(jsonUrl, {cache: "force-cache", headers: {Accept: "application/vnd.github.v3+json"}}).then(jsonResponse => jsonResponse.json());
 		}
 		
-		function fetchText(textUrl) {
+		function fetchGeneralJson(jsonUrl, options) { // Async, returns Promise.
+			return fetchUrl(jsonUrl, options).then(jsonResponse => jsonResponse.json());
+		}
+		
+		function fetchText(textUrl) { // Async, returns Promise.
 			return fetchUrl(defaultFileUrl+textUrl, {cache: "force-cache"}).then(textResponse => textResponse.text());
 		}
 		
 		function listResponses(treeEntry) {
-			// Process every entry passed into gameList.
+			// Process every entry that's passed into the gameList with it's instructions.
 			if (treeEntry.path.split("/").length - 1 == 0) { // 
 				// Found game folder, add game's array to gameList.
-				gameList[treeEntry.path] = {}; // Creates gameList abbtribute for this game.
-				currentGame = treeEntry.path; // This allows `this` to access this game's attribute.
+				gameList[treeEntry.path] = {}; // Before storing any attributes to the gameList's file entry, make an empty gameList attributes for this game.
+				currentGame = treeEntry.path; // This is just some short some shorthand stuff.
 			}
 			else if (treeEntry.path == treeEntry.path.split("/")[0]+"/rules.txt") {
 				// Found main resolution pack, crawl (meta)data info.
@@ -139,18 +146,46 @@
 					function getKeyProperties(keyString) {
 						// Split name and value (and trim them). Returns an array, key name[0] and key value[1].
 						return keyString.split(/=(.+)/).map(array => array.trim());
-					}
-					function processGameRule(textureRule) {
-						// Save instructions to this file's entry in the game folder.
-						if (textureRule.overwriteWidth[0]=="auto") {
-							gameList[currentGame][treeEntry.path].push([textureRule.width, textureRule.overwriteWidth[1], textureRule.overwriteWidth[2]]);
-						}
-						if (textureRule.overwriteHeight[0]=="auto") {
-							gameList[currentGame][treeEntry.path].push([textureRule.height, textureRule.overwriteHeight[1], textureRule.overwriteHeight[2]]);
-						}
-						if (textureRule.overwriteFormat[0]=="unimplemented") {
-							// Implement overwriteFormat features too depending if it's necessairy in any way...
-						}
+                    }
+                    function checkIntegerOrHex(ruleInstruction) {
+                        if (ruleInstruction == undefined) { // Skip undefined things for rules that e.g. don't have overwriteFormats.
+                            return true;
+                        }
+                        ruleInstructionSingle = ruleInstruction.split(",")[0]; // Only check the first value. Don't make instructions with mixed static types like e.g. `overwriteFormat = 0x01a,input()` but include them to the instruction.
+                        if (typeof Number(ruleInstructionSingle) == "number") { // Check if it's only a number or a hex value.
+                            if (!(Number.isInteger(Number(ruleInstructionSingle)) !== 0)) {
+                                // It's not an integer (or it's a 0 integer, doesn't do anything in rules.txt)
+                                console.warn("Texture rule isn't using a valid integer (found: " + ruleInstructionSingle + "), check if a number from `" + treeEntry.path + "` is a float or is 0, which Cemu ignores.");
+                            }
+                            else {
+                                return true; // Integer
+                            }
+                        }
+                        else {
+                            return false; // Instruction
+                        }
+                    }
+					function storeGameRule(textureRule) {
+                        // Save instructions to this file's entry in the game folder now that the rule is finished.
+                        if (!(checkIntegerOrHex(textureRule.overwriteWidth[0]) && checkIntegerOrHex(textureRule.overwriteHeight[0]) && checkIntegerOrHex(textureRule.overwriteFormat[0]))) {
+                            // Skip the rules that are entirely static values and don't need processing.
+                            // Now 'group' the instructions that belong to the same 'input'.
+
+                            // Now some information over the syntax usage in the graphic packs:
+                            // A group can consist of:
+                            // * An input bound to it (which can be bound to a group using the define method, see below).
+                            //      - Has an instruction. The instruction will run for each 'usage', and can use the attributes.
+                            //      - Has the template name for the instruction that will show up in the options panel. (Supported: checkbox, numbers, none).
+                            //      - Has the default value (an user should be able to download the packs without having to adjust anything).
+                            //      - Has description.
+                            //      - Has optional comment (advice, warning).
+                            //      - Has optional min-max values.
+                            // * Rules (simply use the group's name, e.g. 'auto' or 'gamepad').
+                            //      - Add additional attributes, e.g. 'manual(multiplier=3)'. These values can be used by the attribute name (e.g. multiplier) in the input's instruction.
+                            //      - Every rule always has it's rule's values as attributes, so there's no need to pass the width, height etc. of the current rule.
+
+                            // There's 3 instruction groups already predefined, auto, gamepad, manual.
+                        }
 					}
 					
 					rulesLines = rulesResponse.match(/[^\r\n]+/g);
@@ -164,59 +199,65 @@
 						currentLine = rulesLines[i].trim();
 						parseLine = currentLine.substr(0, -currentLine.indexOf("#")>0 ? currentLine.length : currentLine.indexOf("#")).trim();
 						
-						if (currentLine !== "") {
-							if (parseLine.charAt(0) == '[' && parseLine.slice(-1) == ']') { // New section
-								// First, process the textureRule before creating a new textureRule.
-								if (currentRule.sectionName!=undefined) processGameRule(currentRule);
-								currentRule = new textureRule(parseLine);
-							}
-							else if (currentRule.sectionName=="[Definition]") {
-								// Generally, we only expect metadata in "[Definition]" section for rules.
-								if (currentLine.charAt(0) == '#' && currentLine.charAt(1) == '#') { // Current line
-									gameList[currentGame][getKeyProperties(currentLine.substr(2))[0]] = JSON.parse(getKeyProperties(currentLine.substr(2))[1]);
-								}
-								// Now only expect either a name or titleId's keys.
-								else if (getKeyProperties(parseLine)[0]=="name") { // Game Title
-									gameList[currentGame].gameTitle = getKeyProperties(parseLine)[1].slice(1, -1); // Removes quotes.
-								}
-								else if (getKeyProperties(parseLine)[0]=="titleIds") { // Game IDs
-									gameList[currentGame].titleIds = getKeyProperties(parseLine)[1];
-								}
-								else {
-									console.warn("Unexpected rules line: `"+parseLine+"` in `"+currentRule.sectionName+"` section from `"+treeEntry.path+"`.");
-								}
-							}
-							else if (currentRule.sectionName=="[TextureRedefine]") {
-								// First, read the filters.
-								if (getKeyProperties(parseLine)[0]=="width") {
-									currentRule.width = getKeyProperties(parseLine)[1];
-								}
-								else if (getKeyProperties(parseLine)[0]=="height") {
-									currentRule.height = getKeyProperties(parseLine)[1];
-								}
-								else if (getKeyProperties(parseLine)[0]=="formats") {
-									currentRule.formats = getKeyProperties(parseLine)[1];
-								}
-								else if (getKeyProperties(parseLine)[0]=="formatsExcluded") {
-									currentRule.formatsExcluded = getKeyProperties(parseLine)[1];
-								}
-								else if (getKeyProperties(parseLine)[0]=="tilemodes") {
-									currentRule.tilemodes = getKeyProperties(parseLine)[1];
-								}
-								else if (getKeyProperties(parseLine)[0]=="tilemodesExcluded") {
-									currentRule.tilemodesExcluded = getKeyProperties(parseLine)[1];
-								}
-								// Read overwrites into this format [value, index]
-								else if (getKeyProperties(parseLine)[0]=="overwriteWidth") {
-									currentRule.overwriteWidth = [getKeyProperties(parseLine)[1],indexLength+rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
-								}
-								else if (getKeyProperties(parseLine)[0]=="overwriteHeight") {
-									currentRule.overwriteHeight = [getKeyProperties(parseLine)[1],indexLength+rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
-								}
-								else if (getKeyProperties(parseLine)[0]=="overwriteFormat") {
-									currentRule.overwriteFormat = [getKeyProperties(parseLine)[1],indexLength+rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
-								}
-							}
+                        if (currentLine !== "") {
+                            if (parseLine.charAt(0) == '[' && parseLine.slice(-1) == ']') { // New section
+                                // First, store the textureRule before creating a new textureRule.
+                                if (currentRule.sectionName != undefined) storeGameRule(currentRule);
+                                currentRule = new textureRule(parseLine);
+                            }
+                            else if (currentRule.sectionName == "[Definition]") {
+                                // Generally, we only expect metadata in "[Definition]" section for rules.
+                                if (currentLine.charAt(0) == '#' && currentLine.charAt(1) == '#') { // Current line
+                                    gameList[currentGame][getKeyProperties(currentLine.substr(2))[0]] = JSON.parse(getKeyProperties(currentLine.substr(2))[1]);
+                                }
+                                // Now only expect either a name or titleId's keys.
+                                else if (getKeyProperties(parseLine)[0] == "name") { // Game Title
+                                    gameList[currentGame].gameTitle = getKeyProperties(parseLine)[1].slice(1, -1); // Removes quotes.
+                                }
+                                else if (getKeyProperties(parseLine)[0] == "titleIds") { // Game IDs
+                                    gameList[currentGame].titleIds = getKeyProperties(parseLine)[1];
+                                }
+                                else {
+                                    console.warn("Unexpected rules line: `" + parseLine + "` in `" + currentRule.sectionName + "` section from `" + treeEntry.path + "`.");
+                                }
+                            }
+                            else if (currentRule.sectionName == "[Control]") {
+                                // Handle VsyncControl
+                                if (getKeyProperties(parseLine)[0] == "vsyncFrequency") {
+                                    currentRule.vsyncFrequency = getKeyProperties(parseLine)[1];
+                                }
+                            }
+                            else if (currentRule.sectionName == "[TextureRedefine]") {
+                                // First, read the filters.
+                                if (getKeyProperties(parseLine)[0] == "width") {
+                                    currentRule.width = getKeyProperties(parseLine)[1];
+                                }
+                                else if (getKeyProperties(parseLine)[0] == "height") {
+                                    currentRule.height = getKeyProperties(parseLine)[1];
+                                }
+                                else if (getKeyProperties(parseLine)[0] == "formats") {
+                                    currentRule.formats = getKeyProperties(parseLine)[1];
+                                }
+                                else if (getKeyProperties(parseLine)[0] == "formatsExcluded") {
+                                    currentRule.formatsExcluded = getKeyProperties(parseLine)[1];
+                                }
+                                else if (getKeyProperties(parseLine)[0] == "tilemodes") {
+                                    currentRule.tilemodes = getKeyProperties(parseLine)[1];
+                                }
+                                else if (getKeyProperties(parseLine)[0] == "tilemodesExcluded") {
+                                    currentRule.tilemodesExcluded = getKeyProperties(parseLine)[1];
+                                }
+                                // Read overwrites into this format [value, index]
+                                else if (getKeyProperties(parseLine)[0] == "overwriteWidth") {
+                                    currentRule.overwriteWidth = [getKeyProperties(parseLine)[1], indexLength + rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
+                                }
+                                else if (getKeyProperties(parseLine)[0] == "overwriteHeight") {
+                                    currentRule.overwriteHeight = [getKeyProperties(parseLine)[1], indexLength + rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
+                                }
+                                else if (getKeyProperties(parseLine)[0] == "overwriteFormat") {
+                                    currentRule.overwriteFormat = [getKeyProperties(parseLine)[1], indexLength + rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
+                                }
+                            }
 						}
 						indexLength += rulesLines[i].length;
 					}
@@ -230,11 +271,15 @@
 		function listGames(treeFetchUrl) { // Fetch repository contents
 			if (self.fetch) {
 				// Fetch is supported by browser.
-				fetchJson(treeFetchUrl).then(treeResponse => {
+				fetchGithubJson(treeFetchUrl).then(treeResponse => {
 					// Initialize new Promise, made out of every other game file.
 					Promise.all(filterUndefined(treeResponse.tree.map(listResponses/*For every entry in the fetched github json*/))).then(dataResponses => {
 						// Now that all promises are resolved (and everything is in gameList), wait for user interaction to finish.
 						showLoad();
+						// Fetch compat wiki via a https proxy method (compat wiki is only served via http://, prevented by Github's mixed content policy)
+						fetchGeneralJson("https://cors-anywhere.herokuapp.com/http://compat.cemu.info/w/api?action=query&titles=ASVE52|BCZE01&redirects&prop=revisions&rvprop=content&format=json", {cache: "force-cache"}).then(function(compatInfoText) {
+							// Load the fetched response to the gameList. The response has all of the titles compatibility info.
+						});
 						console.log("All promises are resolved, succesfully loaded "+dataResponses.length+" responses!");
 					});
 				});
@@ -295,10 +340,13 @@
 			else {
 				document.getElementById("settingsSection").className="maximized";
 			}
-		}
+        }
+
+        function downloadBuild() {
+        }
 		
 		listGames(defaultFetchUrl);
-	</script>
+    </script>
 	<!-- <<< End Javascript >>> -->
 </head>
 <body>
@@ -307,7 +355,7 @@
 		<nav>
 			
 			<ul class="progressBar">
-				<span><strong>Graphic Packs Configurator</strong></span>
+                <li><strong>Graphic Packs Configurator</strong></li>
 				<!-- Implement some navigation, although not sure atm.
 				<li><a id="progressBar1" href="#">Select games</a></li>
 				<li><a id="progressBar2" href="#">Select your Graphic Pack Settings</a></li>
@@ -317,35 +365,38 @@
 	</header>
 	
 	<main>
-		<form name="selectGames">
-			<p id="actionTitle">Select the games you want to be improved<br></p>
-			<input type="search" id="searchGames" placeholder="Search games..." oninput="filterGameList(this)">
-			
-			<div id="gameList">
-				<template id="gameEntryTemplate">
-					<div class="gameEntry">
-						<input type="checkbox" id="input_folderName" name="folderName" class="checkbox">
-						<label for="input_folderName">gameTitle</label>
-						<p class="clickLabel" id="label_folderName" onClick="showPreview(this);">gameTitle</p>
-					</div>
-				</template>
-			</div>
-			
-			<p id="noSearchResults" style="display: none;">
-				<strong>No such thing could be found.</strong><br> Make sure you typed it correctly. Are you sure that it's both a native Wii U title and that it runs on Cemu?<br><br> If you're sure that it runs and this repository doesn't have <strong>any</strong> graphic pack for it, you can <a href="" id="searchIssueUrl">create a Github Issue</a> about it here and kindly ask someone. You can also <a href="https://github.com/slashiee/cemu_graphic_packs/wiki/How-to-create-Graphic-Packs">make your own graphic pack</a> with the help of the guide.
-			</p>
-			
-			<span id="noSelectionText">You first have to make a selection</span>
-			<input type="button" class="button" id="continueButton" value="Continue" onMouseOver="hoverAction(true);" onMouseOut="hoverAction(false);" onClick="continueToSettings();"/>
-		</form>
+        <form name="selectGames">
+            <p id="actionTitle">Select the games you want to be improved<br></p>
+            <input type="search" id="searchGames" placeholder="Search games..." oninput="filterGameList(this)">
+
+            <div id="gameList">
+                <template id="gameEntryTemplate">
+                    <div class="gameEntry">
+                        <input type="checkbox" id="input_folderName" name="folderName" class="checkbox">
+                        <label for="input_folderName">gameTitle</label>
+                        <p class="clickLabel" id="label_folderName" onClick="showPreview(this);">gameTitle</p>
+                    </div>
+                </template>
+            </div>
+
+            <p id="noSearchResults" style="display: none;">
+                <strong>No such thing could be found.</strong><br> Make sure you typed it correctly. Are you sure that it's both a native Wii U title and that it runs on Cemu?<br><br> If you're sure that it runs and this repository doesn't have <strong>any</strong> graphic pack for it, you can <a href="" id="searchIssueUrl">create a Github Issue</a> about it here and kindly ask someone. You can also <a href="https://github.com/slashiee/cemu_graphic_packs/wiki/How-to-create-Graphic-Packs">make your own graphic pack</a> with the help of the guide.
+            </p>
+
+            <span id="noSelectionText">You first have to make a selection</span>
+            <div id="buttonContainers">
+                <input type="button" class="button" id="continueButton" value="Continue" onMouseOver="hoverAction(true);" onMouseOut="hoverAction(false);" onClick="continueToSettings();"/>
+                <input type="button" class="button" id="downloadButton" value="Download" onClick="downloadBuild();"/>
+            </div>
+        </form>
 		<div id="settingsSection">
-			<h2 id="gameTitle">Game Title here.</h2>
+			<h2 id="gameTitle">Game Title</h2>
 			<span id="gameLinks"></span>
 			<div id="preview">
 			</div>
 			<div id="options" onScroll="changePreviewSize();">
 			</div>
-			<input type="button" class="button" id="nextButton" value="Next Game" onClick="showGame(this)"/>
+			<input type="button" class="button" id="nextButton" value="Next Game" onClick="showGame(this);"/>
 		</div>
 	</main>
 	<div id="localstorageWarning">
