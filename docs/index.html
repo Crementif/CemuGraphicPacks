@@ -93,8 +93,24 @@
                 }
             </script>
         </div>
-        <div id="bar">
-            <strong>Settings</strong>
+        <div class="bar">
+            <button onClick="togglePopup(event);"><strong>Settings</strong></button>
+            <div id="settingsPopup" class="hiddenPopup" onClick="togglePopup(event);">
+                <!--This element stretches the entire screen-->
+                <div id="settingsPopupContainer">
+                    <p class="bar">Settings<span id="settingsClose" onClick="togglePopup(event);">✖</span></p>
+                    <form id="settingsPopupForm">
+                        <input type="checkbox" class="checkbox" id="enableLocalstorage" onChange="storeSettings(this);"/>
+                        <label for="enableLocalStorage">Enable Localstorage</label>
+                    </form>
+                    <script>
+                        settingsFormInputs = document.getElementById("settingsPopupForm").children;
+                        for (i = 0; i < settingsFormInputs.length; i++) {
+                            if (settingsFormInputs[i].type === "checkbox") settingsFormInputs[i].checked = JSON.parse(localStorage.getItem(settingsFormInputs[i].id));
+                        }
+                    </script>
+                </div>
+            </div>
             <span>
                 <a href="">Help us over on github!</a>
                 <a href="">Site not working?</a>

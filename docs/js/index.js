@@ -44,6 +44,15 @@ function filterGameList(searchString) {
     }
 }
 
+function togglePopup(event) {
+    if (event.target.tagName === "BUTTON"/*Button*/ || event.target.parentElement.tagName === "BUTTON"/*Strong tags within button*/ || event.target.id === "settingsPopup"/*Background*/) {
+        document.getElementById("settingsPopup").classList.toggle("hiddenPopup");
+    }
+    else if (event.target.id === "settingsClose") {
+        document.getElementById("settingsPopup").classList.add("hiddenPopup");
+    }
+}
+
 function continueToSettings() {
     if (selected) {
         document.getElementById("continueButton").value = "Go back";
@@ -81,6 +90,10 @@ function changePreviewSize() {
     else {
         document.getElementById("settingsSection").className = "maximized";
     }
+}
+
+function storeSettings(element) {
+    if (element.type === "checkbox") localStorage.setItem(element.id, element.checked);
 }
 
 function downloadBuild() {
