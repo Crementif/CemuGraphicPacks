@@ -78,25 +78,27 @@
 			<input type="button" class="button" id="nextButton" value="Next Game" onClick="showGame(this);"/>
 		</div>
 	</main>
-	<div id="localstorageWarning">
-		This site uses localstorage for storing previous selections and other features. Do you want store your choices? You can change this choice in the settings.
-		<span>
-			<strong onClick="localStorage.setItem('localstoragePref', 'true'); document.getElementById('localstorageWarning').style='display: none';">Sure</strong>
-			<strong onClick="localStorage.setItem('localstoragePref', 'false'); document.getElementById('localstorageWarning').style='display: none';">Nope</strong>
-		</span>
-		<script>
-			if (typeof localStorage.getItem("localstoragePref")==="string" || navigator.doNotTrack==="1") {
-				document.getElementById("localstorageWarning").style="display: none;";
-			}
-		</script>
-	</div>
-	<footer>
-		<strong>Settings</strong>
-		<span>
-			<a href="">Help us over on github!</a>
-			<a href="">Site not working?</a>
-			<a href="">Graphic packs for Cemu&lt;1.8.0</a>
-		</span>
-	</footer>
+    <footer>
+        <div id="localstorageWarning">
+            This site uses localstorage for storing previous selections and other features. Do you want store your choices? You can change this choice in the settings.
+            <span>
+                <strong onClick="localStorage.setItem('localstoragePref', 'true'); document.getElementById('localstorageWarning').style='display: none';">Sure</strong>
+                <strong onClick="localStorage.setItem('localstoragePref', 'false'); document.getElementById('localstorageWarning').style='display: none';">Nope</strong>
+            </span>
+            <script>
+                if (typeof localStorage.getItem("localstoragePref") === "string" || navigator.doNotTrack === "1") {
+                    document.getElementById("localstorageWarning").style = "display: none;";
+                }
+            </script>
+        </div>
+        <div id="bar">
+            <strong>Settings</strong>
+            <span>
+                <a href="">Help us over on github!</a>
+                <a href="">Site not working?</a>
+                <a href="">Graphic packs for Cemu&lt;1.8.0</a>
+            </span>
+        </div>
+    </footer>
 </body>
 </html>

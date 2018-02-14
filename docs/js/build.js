@@ -107,12 +107,12 @@ function fetchText(textUrl) { // Async, returns Promise.
 // Main Fetch Function
 function listResponses(treeEntry) {
     // Process every entry that's passed into the gameList with it's instructions.
-    if (treeEntry.path.split("/").length - 1 == 0) { // 
+    if (treeEntry.path.split("/").length - 1 === 0) { // 
         // Found game folder, add game's array to gameList.
         gameList[treeEntry.path] = {}; // Before storing any attributes to the gameList's file entry, make an empty gameList attributes for this game.
         currentGame = treeEntry.path; // This is just some short some shorthand stuff.
     }
-    else if (treeEntry.path == treeEntry.path.split("/")[0] + "/rules.txt") {
+    else if (treeEntry.path === treeEntry.path.split("/")[0] + "/rules.txt") {
         // Found main resolution pack, crawl (meta)data info.
         return fetchText(treeEntry.path).then(rulesResponse => {
             // Define some functions only used for rules.txt's.
@@ -121,11 +121,11 @@ function listResponses(treeEntry) {
                 return keyString.split(/=(.+)/).map(array => array.trim());
             }
             function checkIntegerOrHex(ruleInstruction) {
-                if (ruleInstruction == undefined) { // Skip undefined things for rules that e.g. don't have overwriteFormats.
+                if (ruleInstruction === undefined) { // Skip undefined things for rules that e.g. don't have overwriteFormats.
                     return true;
                 }
                 ruleInstructionSingle = ruleInstruction.split(",")[0]; // Only check the first value. Don't make instructions with mixed static types like e.g. `overwriteFormat = 0x01a,input()` but include them to the instruction.
-                if (typeof Number(ruleInstructionSingle) == "number") { // Check if it's only a number or a hex value.
+                if (typeof Number(ruleInstructionSingle) === "number") { // Check if it's only a number or a hex value.
                     if (!(Number.isInteger(Number(ruleInstructionSingle)) !== 0)) {
                         // It's not an integer (or it's a 0 integer, doesn't do anything in rules.txt)
                         console.warn("Texture rule isn't using a valid integer (found: " + ruleInstructionSingle + "), check if a number from `" + treeEntry.path + "` is a float or is 0, which Cemu ignores.");
@@ -173,61 +173,61 @@ function listResponses(treeEntry) {
                 parseLine = currentLine.substr(0, -currentLine.indexOf("#") > 0 ? currentLine.length : currentLine.indexOf("#")).trim();
 
                 if (currentLine !== "") {
-                    if (parseLine.charAt(0) == '[' && parseLine.slice(-1) == ']') { // New section
+                    if (parseLine.charAt(0) === '[' && parseLine.slice(-1) === ']') { // New section
                         // First, store the textureRule before creating a new textureRule.
-                        if (currentRule.sectionName != undefined) storeGameRule(currentRule);
+                        if (currentRule.sectionName !== undefined) storeGameRule(currentRule);
                         currentRule = new textureRule(parseLine);
                     }
-                    else if (currentRule.sectionName == "[Definition]") {
+                    else if (currentRule.sectionName === "[Definition]") {
                         // Generally, we only expect metadata in "[Definition]" section for rules.
-                        if (currentLine.charAt(0) == '#' && currentLine.charAt(1) == '#') { // Current line
+                        if (currentLine.charAt(0) === '#' && currentLine.charAt(1) === '#') { // Current line
                             gameList[currentGame][getKeyProperties(currentLine.substr(2))[0]] = JSON.parse(getKeyProperties(currentLine.substr(2))[1]);
                         }
                         // Now only expect either a name or titleId's keys.
-                        else if (getKeyProperties(parseLine)[0] == "name") { // Game Title
+                        else if (getKeyProperties(parseLine)[0] === "name") { // Game Title
                             gameList[currentGame].gameTitle = getKeyProperties(parseLine)[1].slice(1, -1); // Removes quotes.
                         }
-                        else if (getKeyProperties(parseLine)[0] == "titleIds") { // Game IDs
+                        else if (getKeyProperties(parseLine)[0] === "titleIds") { // Game IDs
                             gameList[currentGame].titleIds = getKeyProperties(parseLine)[1];
                         }
                         else {
                             console.warn("Unexpected rules line: `" + parseLine + "` in `" + currentRule.sectionName + "` section from `" + treeEntry.path + "`.");
                         }
                     }
-                    else if (currentRule.sectionName == "[Control]") {
+                    else if (currentRule.sectionName === "[Control]") {
                         // Handle VsyncControl
-                        if (getKeyProperties(parseLine)[0] == "vsyncFrequency") {
+                        if (getKeyProperties(parseLine)[0] === "vsyncFrequency") {
                             currentRule.vsyncFrequency = getKeyProperties(parseLine)[1];
                         }
                     }
-                    else if (currentRule.sectionName == "[TextureRedefine]") {
+                    else if (currentRule.sectionName === "[TextureRedefine]") {
                         // First, read the filters.
-                        if (getKeyProperties(parseLine)[0] == "width") {
+                        if (getKeyProperties(parseLine)[0] === "width") {
                             currentRule.width = getKeyProperties(parseLine)[1];
                         }
-                        else if (getKeyProperties(parseLine)[0] == "height") {
+                        else if (getKeyProperties(parseLine)[0] === "height") {
                             currentRule.height = getKeyProperties(parseLine)[1];
                         }
-                        else if (getKeyProperties(parseLine)[0] == "formats") {
+                        else if (getKeyProperties(parseLine)[0] === "formats") {
                             currentRule.formats = getKeyProperties(parseLine)[1];
                         }
-                        else if (getKeyProperties(parseLine)[0] == "formatsExcluded") {
+                        else if (getKeyProperties(parseLine)[0] === "formatsExcluded") {
                             currentRule.formatsExcluded = getKeyProperties(parseLine)[1];
                         }
-                        else if (getKeyProperties(parseLine)[0] == "tilemodes") {
+                        else if (getKeyProperties(parseLine)[0] === "tilemodes") {
                             currentRule.tilemodes = getKeyProperties(parseLine)[1];
                         }
-                        else if (getKeyProperties(parseLine)[0] == "tilemodesExcluded") {
+                        else if (getKeyProperties(parseLine)[0] === "tilemodesExcluded") {
                             currentRule.tilemodesExcluded = getKeyProperties(parseLine)[1];
                         }
                         // Read overwrites into this format [value, index]
-                        else if (getKeyProperties(parseLine)[0] == "overwriteWidth") {
+                        else if (getKeyProperties(parseLine)[0] === "overwriteWidth") {
                             currentRule.overwriteWidth = [getKeyProperties(parseLine)[1], indexLength + rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
                         }
-                        else if (getKeyProperties(parseLine)[0] == "overwriteHeight") {
+                        else if (getKeyProperties(parseLine)[0] === "overwriteHeight") {
                             currentRule.overwriteHeight = [getKeyProperties(parseLine)[1], indexLength + rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
                         }
-                        else if (getKeyProperties(parseLine)[0] == "overwriteFormat") {
+                        else if (getKeyProperties(parseLine)[0] === "overwriteFormat") {
                             currentRule.overwriteFormat = [getKeyProperties(parseLine)[1], indexLength + rulesLines[i].indexOf(getKeyProperties(parseLine)[1]), getKeyProperties(parseLine)[1].length];
                         }
                     }
