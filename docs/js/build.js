@@ -243,5 +243,45 @@ function listGames(treeFetchUrl) { // Fetch repository contents
     }
 }
 
+// Maybe not really build specific, but has to be loaded before we do any fetching.
+// If defined in index.js, it'll be in conflict with the deferred loading behaviour of that.
+function loadSettings() {
+    settingsFormInputs = document.getElementById("settingsPopupForm").children;
+    for (i = 0; i < settingsFormInputs.length; i++) {
+        if (settingsFormInputs[i].type === "checkbox") {
+            if (localStorage.getItem(settingsFormInputs[i].id) === null) {
+                settingsFormInputs[i].checked = settings[settingsFormInputs[i].id]; // Default
+            }
+            else {
+                settings[settingsFormInputs[i].id] = JSON.parse(localStorage.getItem(settingsFormInputs[i].id));
+                settingsFormInputs[i].checked = settings[settingsFormInputs[i].id];
+            }
+        }
+        if (settingsFormInputs[i].type === "text") {
+            if (localStorage.getItem(settingsFormInputs[i].id) === null) {
+                settingsFormInputs[i].value = settings[settingsFormInputs[i].id]; // Default
+            }
+            else {
+                settings[settingsFormInputs[i].id] = localStorage.getItem(settingsFormInputs[i].id);
+                settingsFormInputs[i].value = settings[settingsFormInputs[i].id];
+            }
+        }
+    }
+    if (localStorage.getItem("darkTheme") === "true") {
+        document.body.classList.remove("lightTheme");
+        document.body.classList.add("darkTheme");
+    }
+    if (localStorage.getItem("enableLocalstorage") !== null) { // User has made an active decision about localstorage
+        document.getElementById("localstorageWarning").style = "display: none;";
+    }
+}
+
+loadSettings();
+repositoryUsername = settings.githubRepositoryUrl.split('/')[3];
+repositoryName = settings.githubRepositoryUrl.split('/')[4];
+defaultFetchUrl = "https://api.github.com/repos/" + repositoryUsername + "/" + repositoryName + "/git/trees/master:src?recursive=3";
+defaultFileUrl = "https://raw.githubusercontent.com/" + repositoryUsername + "/" + repositoryName + "/master/src/"
+reportUrl = "https://github.com/" + repositoryUsername + "/" + repositoryName + "/issues/";
+
 // Initiates games fetching
 listGames(defaultFetchUrl);

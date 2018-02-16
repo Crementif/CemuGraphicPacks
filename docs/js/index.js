@@ -70,7 +70,7 @@ function hoverAction(hovering) {
     if (hovering) {
         for (var i = 0; i < document.getElementsByClassName("checkbox").length; i++) {
             if (document.getElementsByClassName("checkbox")[i].checked) {
-                document.getElementById("continueButton").style = "background-color: rgba(158,158,158,.3);";
+                document.getElementById("continueButton").style = "background-color: var(--theme-buttonHover);";
                 selected = true;
                 return;
             }
@@ -80,7 +80,7 @@ function hoverAction(hovering) {
         document.getElementById("gameList").className = "";
     }
     selected = false;
-    document.getElementById("continueButton").style = "background-color: rgba(158,158,158,.2);";
+    document.getElementById("continueButton").style = "background-color: var(--theme-button);";
 }
 
 function changePreviewSize() {
@@ -92,9 +92,14 @@ function changePreviewSize() {
     }
 }
 
-function storeSettings(element) {
-    if (element.type === "checkbox") localStorage.setItem(element.id, element.checked);
+function downloadBuild() {
 }
 
-function downloadBuild() {
+function storeSettings(element) {
+    if (element.type === "checkbox") localStorage.setItem(element.id, element.checked);
+    if (element.type === "text") localStorage.setItem(element.id, element.value);
+    if (element.name === "theme") {
+        localStorage.setItem("darkTheme", document.getElementById("darkTheme").checked);
+        loadSettings();
+    }
 }

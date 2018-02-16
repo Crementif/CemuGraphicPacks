@@ -19,18 +19,18 @@
     <meta name="description" content="Community Made Graphic Packs for Cemu." />
     <meta name="keywords" content="Cemu, Wii U, Graphic Pack, Modification, Upscale, Games, Community" />
     <script>
-        // Calculate Github repository info, avoid using extra api calls.
-        repositoryUsername = "Crementif"; // Replace with window.location.host.split(".")[0];
-        repositoryName = "CemuGraphicPacks"; // Replace with window.location.pathname.split("/")[1];
-        defaultFetchUrl = "https://api.github.com/repos/" + repositoryUsername + "/" + repositoryName + "/git/trees/master:src?recursive=3";
-        defaultFileUrl = "https://raw.githubusercontent.com/" + repositoryUsername + "/" + repositoryName + "/master/src/"
-        reportUrl = "https://github.com/" + repositoryUsername + "/" + repositoryName + "/issues/";
-        // This info is only used to make 'dynamic' fetch calls.
+        // >>> Build/page settings <<<
+        settings = { // Default settings
+            enableLocalstorage: false,
+            githubRepositoryUrl: "https://github.com/" + window.location.host.split(".")[0] + "/" + window.location.pathname.split("/")[1], // Assumes website is using Github Pages url structure
+            darkTheme: false // If false, light theme will be used
+        }
+
     </script>
     <script type="text/javascript" src="js/build.js" async></script>
     <script type="text/javascript" src="js/index.js" defer></script>
 </head>
-<body>
+<body class="lightTheme">
 	<header>
 		<a id="logo" href="/index.html">Cemu Graphic Packs</a>
 		<nav>
@@ -84,14 +84,9 @@
         <div id="localstorageWarning">
             This site uses localstorage for storing previous selections and other features. Do you want store your choices? You can change this choice in the settings.
             <span>
-                <strong onClick="localStorage.setItem('localstoragePref', 'true'); document.getElementById('localstorageWarning').style='display: none';">Sure</strong>
-                <strong onClick="localStorage.setItem('localstoragePref', 'false'); document.getElementById('localstorageWarning').style='display: none';">Nope</strong>
+                <strong onClick="document.getElementById('enableLocalstorage').checked = true; storeSettings(document.getElementById('enableLocalstorage')); loadSettings();">Sure</strong>
+                <strong onClick="document.getElementById('enableLocalstorage').checked = false; storeSettings(document.getElementById('enableLocalstorage')); loadSettings();">Nope</strong>
             </span>
-            <script>
-                if (typeof localStorage.getItem("localstoragePref") === "string" || navigator.doNotTrack === "1") {
-                    document.getElementById("localstorageWarning").style = "display: none;";
-                }
-            </script>
         </div>
         <div class="bar">
             <button onClick="togglePopup(event);"><strong>Settings</strong></button>
@@ -101,14 +96,15 @@
                     <p class="bar">Settings<span id="settingsClose" onClick="togglePopup(event);">✖</span></p>
                     <form id="settingsPopupForm">
                         <input type="checkbox" class="checkbox" id="enableLocalstorage" onChange="storeSettings(this);"/>
-                        <label for="enableLocalStorage">Enable Localstorage</label>
+                        <label for="enableLocalstorage">Enable Localstorage</label><br>
+                        <label for="githubRepositoryUrl">Github Repository Url</label>
+                        <input type="text" id="githubRepositoryUrl" onChange="storeSettings(this);"/><br>
+                        <span>Theme: </span>
+                        <input type="radio" id="lightTheme" name="theme" value="light" onChange="storeSettings(this);" checked>
+                        <label for="lightTheme">Light</label>
+                        <input type="radio" id="darkTheme" name="theme" value="dark" onChange="storeSettings(this);">
+                        <label for="darkTheme">Dark</label>
                     </form>
-                    <script>
-                        settingsFormInputs = document.getElementById("settingsPopupForm").children;
-                        for (i = 0; i < settingsFormInputs.length; i++) {
-                            if (settingsFormInputs[i].type === "checkbox") settingsFormInputs[i].checked = JSON.parse(localStorage.getItem(settingsFormInputs[i].id));
-                        }
-                    </script>
                 </div>
             </div>
             <span>
