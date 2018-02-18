@@ -22,8 +22,7 @@
         // >>> Build/page settings <<<
         settings = { // Default settings
             enableLocalstorage: false,
-            githubRepositoryUrl: "https://github.com/" + window.location.host.split(".")[0] + "/" + window.location.pathname.split("/")[1], // Assumes website is using Github Pages url structure
-            darkTheme: false // If false, light theme will be used
+            githubRepositoryUrl: "https://github.com/" + window.location.host.split(".")[0] + "/" + window.location.pathname.split("/")[1] // Assumes website is using Github Pages url structure
         }
 
     </script>
@@ -64,9 +63,9 @@
                 <strong>No such thing could be found.</strong><br> Make sure you typed it correctly. Are you sure that it's both a native Wii U title and that it runs on Cemu?<br><br> If you're sure that it runs and this repository doesn't have <strong>any</strong> graphic packs for it, you can <a href="" id="searchIssueUrl">create a Github Issue</a> about it here and kindly ask someone. You can also <a href="https://github.com/slashiee/cemu_graphic_packs/wiki/How-to-create-Graphic-Packs">make your own graphic pack</a> with the help of the guide.
             </p>
 
-            <span id="noSelectionText">You first have to make a selection</span>
-            <div id="buttonContainers">
-                <input type="button" class="button" id="continueButton" value="Continue" onMouseOver="hoverAction(true);" onMouseOut="hoverAction(false);" onClick="continueToSettings();"/>
+            <div id="buttonContainers" onmouseover="checkSelectionHover();">
+                <input type="button" class="button" id="continueButton" value="Continue" onClick="continueToSettings();"/>
+                <span id="noSelectionText">You don't have any games selected</span>
                 <input type="button" class="button" id="downloadButton" value="Download" onClick="downloadBuild();"/>
             </div>
         </form>
@@ -99,11 +98,35 @@
                         <label for="enableLocalstorage">Enable Localstorage</label><br>
                         <label for="githubRepositoryUrl">Github Repository Url</label>
                         <input type="text" id="githubRepositoryUrl" onChange="storeSettings(this);"/><br>
-                        <span>Theme: </span>
-                        <input type="radio" id="lightTheme" name="theme" value="light" onChange="storeSettings(this);" checked>
-                        <label for="lightTheme">Light</label>
-                        <input type="radio" id="darkTheme" name="theme" value="dark" onChange="storeSettings(this);">
-                        <label for="darkTheme">Dark</label>
+                        <span id="themes" onChange="storeSettings(this);">
+                            Theme:
+                            <input type="radio" id="lightTheme" name="theme" value="light" checked/>
+                            <label for="lightTheme">Light</label>
+                            <input type="radio" id="darkTheme" name="theme" value="dark"/>
+                            <label for="darkTheme">Dark</label>
+                            <input type="radio" id="customTheme" name="theme" value="custom"/>
+                            <label for="customTheme">Custom</label><br>
+                            <span id="themePicker">
+                                <input type="color" id="themeBackground"/>
+                                <label for="themeBackground">Background</label><br>
+                                <input type="color" id="themeAccentText"/>
+                                <label for="themeAccentText">Accent Text</label><br>
+                                <input type="color" id="themeAccentColor"/>
+                                <label for="themeAccentColor">Accent Color</label><br>
+                                <input type="color" id="themeText"/>
+                                <label for="themeText">Text</label><br>
+                                <input type="color" id="themeButton"/>
+                                <label for="themeButton">Button</label><br>
+                                <input type="color" id="themeButtonHover"/>
+                                <label for="themeButtonHover">Button Hover</label><br>
+                                <input type="color" id="themeBar"/>
+                                <label for="themeBar">Bar</label><br>
+                                <input type="color" id="themeMisc"/>
+                                <label for="themeMisc">Misc</label><br>
+                                <input type="button" value="Share and Input" onClick="themeString = window.prompt('You can share or input someone else\'s custom theme string.', localStorage.getItem('customTheme')); if (themeString !== null) {localStorage.setItem('customTheme', themeString); loadSettings();}"/>
+                                <input type="button" value="Reset theme" onClick="localStorage.removeItem('customTheme'); localStorage.setItem('themes', 'lightTheme'); location.reload(false);"/>
+                            </span><br>
+                        </span>
                     </form>
                 </div>
             </div>

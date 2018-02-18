@@ -3,7 +3,6 @@
 
 
 var gameList = {};
-var selected = false;
 
 function textureRule(sectionName) {
     this.sectionName = sectionName;
@@ -257,7 +256,7 @@ function loadSettings() {
                 settingsFormInputs[i].checked = settings[settingsFormInputs[i].id];
             }
         }
-        if (settingsFormInputs[i].type === "text") {
+        else if (settingsFormInputs[i].type === "text") {
             if (localStorage.getItem(settingsFormInputs[i].id) === null) {
                 settingsFormInputs[i].value = settings[settingsFormInputs[i].id]; // Default
             }
@@ -266,10 +265,40 @@ function loadSettings() {
                 settingsFormInputs[i].value = settings[settingsFormInputs[i].id];
             }
         }
-    }
-    if (localStorage.getItem("darkTheme") === "true") {
-        document.body.classList.remove("lightTheme");
-        document.body.classList.add("darkTheme");
+        else if (settingsFormInputs[i].id === "themes") {
+            themeLocalstorage = localStorage.getItem(settingsFormInputs[i].id);
+            document.body.style = ""; // Reset from custom theme
+
+            if (themeLocalstorage === null) {
+                document.body.className = "lightTheme";
+            }
+            else if (themeLocalstorage === "light" || themeLocalstorage === "dark") {
+                document.getElementById(themeLocalstorage + "Theme").checked = true;
+                document.body.className = themeLocalstorage + "Theme";
+            }
+            else if (themeLocalstorage === "custom") {
+                customThemeObject = JSON.parse(localStorage.getItem("customTheme"));
+                document.body.className = "customTheme";
+                document.getElementById("customTheme").checked = true;
+                document.body.style.setProperty("--theme-background", customThemeObject.background);
+                document.body.style.setProperty("--theme-accentText", customThemeObject.accentText);
+                document.body.style.setProperty("--theme-accentColor", customThemeObject.accentColor);
+                document.body.style.setProperty("--theme-text", customThemeObject.text);
+                document.body.style.setProperty("--theme-button", customThemeObject.button);
+                document.body.style.setProperty("--theme-buttonHover", customThemeObject.buttonHover);
+                document.body.style.setProperty("--theme-bar", customThemeObject.bar);
+                document.body.style.setProperty("--theme-misc", customThemeObject.misc);
+                document.getElementById("themeBackground").value = customThemeObject.background.trim();
+                document.getElementById("themeAccentText").value = customThemeObject.accentText.trim();
+                document.getElementById("themeAccentColor").value = customThemeObject.accentColor.trim();
+                document.getElementById("themeText").value = customThemeObject.text.trim();
+                document.getElementById("themeButton").value = customThemeObject.button.trim();
+                document.getElementById("themeButtonHover").value = customThemeObject.buttonHover.trim();
+                document.getElementById("themeBar").value = customThemeObject.bar.trim();
+                document.getElementById("themeMisc").value = customThemeObject.misc.trim();
+            }
+        }
+
     }
     if (localStorage.getItem("enableLocalstorage") !== null) { // User has made an active decision about localstorage
         document.getElementById("localstorageWarning").style = "display: none;";

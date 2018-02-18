@@ -54,33 +54,20 @@ function togglePopup(event) {
 }
 
 function continueToSettings() {
-    if (selected) {
-        document.getElementById("continueButton").value = "Go back";
-        document.getElementById("actionTitle").innerText = "Select a game to view it's options.";
-        // Go to the next stage
-        document.getElementsByTagName("main")[0].classList.add("selectOptions"); // The stage switching is purely cosmetic
-    }
-    else {
-        document.getElementById("noSelectionText").className = "noSelectionText";
-        document.getElementById("gameList").className += "noSelectionCheckbox";
-    }
+    document.getElementById("continueButton").value = "Go back";
+    document.getElementById("actionTitle").innerText = "Select a game to view it's options.";
+    // Go to the next stage
+    document.getElementsByTagName("main")[0].classList.add("selectOptions"); // The stage switching is purely cosmetic
 }
 
-function hoverAction(hovering) {
-    if (hovering) {
-        for (var i = 0; i < document.getElementsByClassName("checkbox").length; i++) {
-            if (document.getElementsByClassName("checkbox")[i].checked) {
-                document.getElementById("continueButton").style = "background-color: var(--theme-buttonHover);";
-                selected = true;
-                return;
-            }
+function checkSelectionHover() {
+    for (var i = 0; i < document.getElementsByName("selectGames")[0].getElementsByClassName("checkbox").length; i++) {
+        if (document.getElementsByName("selectGames")[0].getElementsByClassName("checkbox")[i].checked) {
+            document.getElementById("continueButton").disabled = false;
+            return;
         }
-        // Reset noSelection transition (TODO: Poor design)
-        document.getElementById("noSelectionText").className = "";
-        document.getElementById("gameList").className = "";
     }
-    selected = false;
-    document.getElementById("continueButton").style = "background-color: var(--theme-button);";
+    document.getElementById("continueButton").disabled = true;
 }
 
 function changePreviewSize() {
@@ -98,8 +85,38 @@ function downloadBuild() {
 function storeSettings(element) {
     if (element.type === "checkbox") localStorage.setItem(element.id, element.checked);
     if (element.type === "text") localStorage.setItem(element.id, element.value);
-    if (element.name === "theme") {
-        localStorage.setItem("darkTheme", document.getElementById("darkTheme").checked);
-        loadSettings();
+    if (element.id === "themes") {
+        if (document.getElementById("lightTheme").checked) localStorage.setItem(element.id, "light");
+        if (document.getElementById("darkTheme").checked) localStorage.setItem(element.id, "dark");
+        if (document.getElementById("customTheme").checked) {
+            localStorage.setItem(element.id, "custom");
+            if (localStorage.getItem("customTheme") === null) { // When there's no custom theme stored, get the current values and use those.
+                computedStyle = window.getComputedStyle(document.body);
+                themePickerObject = {
+                    background: computedStyle.getPropertyValue("--theme-background"),
+                    accentText: computedStyle.getPropertyValue("--theme-accentText"),
+                    accentColor: computedStyle.getPropertyValue("--theme-accentColor"),
+                    text: computedStyle.getPropertyValue("--theme-text"),
+                    button: computedStyle.getPropertyValue("--theme-button"),
+                    buttonHover: computedStyle.getPropertyValue("--theme-buttonHover"),
+                    bar: computedStyle.getPropertyValue("--theme-bar"),
+                    misc: computedStyle.getPropertyValue("--theme-misc")
+                }
+            }
+            else {
+                themePickerObject = {
+                    background: document.getElementById("themeBackground").value,
+                    accentText: document.getElementById("themeAccentText").value,
+                    accentColor: document.getElementById("themeAccentColor").value,
+                    text: document.getElementById("themeText").value,
+                    button: document.getElementById("themeButton").value,
+                    buttonHover: document.getElementById("themeButtonHover").value,
+                    bar: document.getElementById("themeBar").value,
+                    misc: document.getElementById("themeMisc").value
+                }
+            }
+            localStorage.setItem("customTheme", JSON.stringify(themePickerObject));
+        }
+        loadSettings(); // Reload theme
     }
 }
