@@ -1,10 +1,10 @@
 [Definition]
 titleIds = 0005000010172600,0005000010172700,000500001011B900
 name = "Bayonetta 2"
-## nativeRes = 720
+### gameId = ["AQUE01","AQUJ01","AQUP01"]
+### nativeResolution = 720
+### h264 = true
 ## searchTags = []
-## gameId = ["AQUE01","AQUJ01","AQUP01"]
-## h264 = true
 
 [TextureRedefine] # TV upscaling
 width = 1280

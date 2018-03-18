@@ -1,9 +1,9 @@
 [Definition]
 titleIds = 0005000010180600,0005000010180700,0005000010180500
 name = "Captain Toad: Treasure Tracker"
-## nativeRes = 720
+### gameId = ["AKBE01","AKBJ01","AKBP01"]
+### nativeResolution = 720
 ## searchTags = ["CT:TT"]
-## gameId = ["AKBE01","AKBJ01","AKBP01"]
 
 [TextureRedefine] # TV upscaling
 width = 1280
