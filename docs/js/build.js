@@ -61,7 +61,7 @@ function fetchUrl(url, options) {
             throw Error("A wild fetch problem appeared! It's super effective! It's Fetch Status Code™ is " + fetchResponse.statusText);
         }
         return fetchResponse;
-    })
+    });
 }
 
 // Different fetch functions for different files
@@ -309,7 +309,7 @@ loadSettings();
 repositoryUsername = settings.githubRepositoryUrl.split('/')[3];
 repositoryName = settings.githubRepositoryUrl.split('/')[4];
 defaultFetchUrl = "https://api.github.com/repos/" + repositoryUsername + "/" + repositoryName + "/git/trees/master:src?recursive=3";
-defaultFileUrl = "https://raw.githubusercontent.com/" + repositoryUsername + "/" + repositoryName + "/master/src/"
+defaultFileUrl = "https://raw.githubusercontent.com/" + repositoryUsername + "/" + repositoryName + "/master/src/";
 reportUrl = "https://github.com/" + repositoryUsername + "/" + repositoryName + "/issues/";
 
 // Initiates games fetching

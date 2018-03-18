@@ -101,7 +101,7 @@ function storeSettings(element) {
                     buttonHover: computedStyle.getPropertyValue("--theme-buttonHover"),
                     bar: computedStyle.getPropertyValue("--theme-bar"),
                     misc: computedStyle.getPropertyValue("--theme-misc")
-                }
+                };
             }
             else {
                 themePickerObject = {
@@ -113,7 +113,7 @@ function storeSettings(element) {
                     buttonHover: document.getElementById("themeButtonHover").value,
                     bar: document.getElementById("themeBar").value,
                     misc: document.getElementById("themeMisc").value
-                }
+                };
             }
             localStorage.setItem("customTheme", JSON.stringify(themePickerObject));
         }
