@@ -86,7 +86,7 @@ function listResponses(treeEntry) {
         currentGame = treeEntry.path; // This is just some short some shorthand stuff.
     }
     else if (treeEntry.path === treeEntry.path.split("/")[0] + "/rules.txt") {
-        // Found main resolution pack, crawl (meta)data info.
+        // Found main resolution pack, crawl meta info.
         return fetchText(treeEntry.path).then(rulesResponse => {
             parseMeta(rulesResponse);
             return rulesResponse;
@@ -106,13 +106,14 @@ function listGames(treeFetchUrl) { // Fetch repository contents
                 for (game in gameList) {
                     titleIdString = titleIdString+(gameList[game].gameId[0]+"|");
                 }
-                ungroupedCompatRatings = new Object;
+/*              ungroupedCompatRatings = new Object;
                 fetchGeneralJson("https://cors-anywhere.herokuapp.com/http://compat.cemu.info/w/api?action=query&titles="+titleIdString.slice(0, -1)+"&redirects&prop=revisions|redirects&rvprop=content&format=json", { cache: "force-cache" }).then(function (compatResponse) {
                     // Load the fetched response to the gameList. The response has all of the titles compatibility info.
                     for (game in compatResponse.query.pages) {
                         if (compatResponse.query.pages[game].redirects!==undefined) ungroupedCompatRatings[compatResponse.query.pages[game].redirects[0].title] = compatResponse.query.pages[game].revisions[0]["*"].match(/(?:version=)[^|]+|(?:OS=)[^|]+|(?:region=)[^|]+|(?:CPU=)[^|]+|(?:GPU=)[^|]+|(?:user=)[^|]+|(?:FPS=)[^|]+|(?:rating=)[^|]+|(?:notes=)[^}}]/gm);
                     }
                 });
+*/
                 console.log("All promises are resolved, succesfully loaded " + dataResponses.length + " responses!");
             });
         });

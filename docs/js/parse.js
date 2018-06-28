@@ -17,15 +17,22 @@
 //      - Add additional attributes, e.g. 'manual(multiplier=3)'. These values can be used by the attribute name (e.g. multiplier) in the input's instruction.
 //      - Every rule always has it's rule's values as attributes, so there's no need to pass the width, height etc. of the current rule.
 
-// There's 3 instruction groups already predefined, auto, gamepad, manual.
+// There's 4 instruction groups already predefined: auto, ratio, gamepad, manual.
 
 // >>> Structures/Helpers <<<
-function getKeyProperties(keyString) {
-    // Split name and value (and trim them). Returns an array, key name[0] and key value[1].
-    return keyString.split(/=(.+)/).map(array => array.trim());
+function parseValues(stringInstruction) {
+    if ()
 }
 
-function checkIntegerOrHex(ruleInstruction) {
+function getKeyProperties(keyString) {
+    // Check if proper assignment
+    if (keyString.indexOf("=") !== keyString.lastIndexOf("=")) console.warn(`Can't use the '=' symbol more then once in ${keyString}.`); // Check if there's multiple assignments
+    else if (keyString !== "") console.warn(`Didn't found an assignment. Skipping ${keyString}...`); // Check if non-empty invalid assignment.
+    // Split name and value (and trim them). Returns an array, key name[0] and key value[1].
+    return keyString.split(/=(.+)/).map(array => JSON.parse(`[${array.trim()}]`)[0]); // Split the array, trim the entries and remove the latest// TODO: Use other method that might be faster.
+}
+
+function checkTextureLine(ruleInstruction) {
     if (ruleInstruction === undefined) { // Skip undefined things for rules that e.g. don't have overwriteFormats.
         return true;
     }
@@ -45,12 +52,28 @@ function checkIntegerOrHex(ruleInstruction) {
 }
 
 // >>> Parsing <<<
-function parseMeta(dataFile) {
-    dataFile.lastIndexOf("##");
-    lines = rulesResponse.split(/\r?\n/);
-    index = 0;
-    for (i=0; i<lines.length; i++) {
-        index += lines[i].length;
-        if (index>)
+function parseMeta(txtFile, propertyReference) {
+    // If no propertyReference is given, this function will return an object with the whole meta (used by the initial main rules.txt scan)
+    // If it is given though, this function will not return anything but change the reference directly (used by the other rules.txt scans).
+
+    // Optimize meta parsing
+    // - This function will pretty much determine the speed of the site if the website isn't the bottleneck.
+    // - Returns an object with the properties.
+
+    let returnMeta = {};
+    let endOfMeta = txtFile.indexOf("\n", txtFile.lastIndexOf("##"));
+    let metaLines = txtFile.slice(0, endOfMeta).split(/\r?\n/);
+    console.debug(`Optimizing meta parsing, only reading ${endOfMeta} of ${txtFile.length} characters.`);
+
+    // Cycle through each meta line.
+    for (i=0; i<metaLines.length; i++) {
+        let metaLine = metaLines[i].trim();
+        if (metaLine.startsWith("## ")) {
+            // Begin parsing the meta line
+            metaKeyProperties = getKeyProperties(metaLine.slice(3));
+            if (propertyReference===undefined) returnMeta[metaKeyProperties[0]] = metaKeyProperties[1];
+            else propertyReference[metaKeyProperties[0]] = metaKeyProperties[1];
+        }
     }
+    console.debug(`Found ${returnMeta.keys.length} keys.`);
 }
