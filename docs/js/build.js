@@ -80,17 +80,26 @@ function fetchText(textUrl) { // Async, returns Promise.
 // Main Fetch Function
 function listResponses(treeEntry) {
     // Process every entry that's passed into the gameList with it's instructions.
-    if (treeEntry.path.split("/").length - 1 === 0) { // 
+    if (treeEntry.path.split("/").length - 1 === 0) {
         // Found game folder, add game's array to gameList.
         gameList[treeEntry.path] = {}; // Before storing any attributes to the gameList's file entry, make an empty gameList attributes for this game.
         currentGame = treeEntry.path; // This is just some short some shorthand stuff.
     }
-    else if (treeEntry.path === treeEntry.path.split("/")[0] + "/rules.txt") {
+    else if (treeEntry.path === treeEntry.path.split("/")[0] + "/rules.txt") { // Selective fetching and parsing phase
         // Found main resolution pack, crawl meta info.
         return fetchText(treeEntry.path).then(rulesResponse => {
+            console.group(`Meta Parsing: ${treeEntry.path}`);
+            console.time(`${treeEntry.path} parsing time`);
             parseMeta(rulesResponse);
+            console.timeEnd(`${treeEntry.path} parsing time`);
+            console.groupEnd();
             return rulesResponse;
         });
+    }
+    else {
+        // TODO: Store the url paths of the other files.
+        // Parsing all the files before the user makes a selection would require fetching and parsing every file.
+        // Afterwards, when it needs to show the options for the games, we add a method to
     }
 }
 
@@ -98,9 +107,12 @@ function listGames(treeFetchUrl) { // Fetch repository contents
     if (self.fetch) {
         // Fetch is supported by browser.
         fetchGithubJson(treeFetchUrl).then(treeResponse => {
-            // Initialize new Promise, made out of every other game file.
-            Promise.all(filterUndefined(treeResponse.tree.map(listResponses/*For every entry in the fetched github json*/))).then(dataResponses => {
-                // Now that all promises are resolved (and everything is in gameList), wait for user interaction to finish.
+            // Initialize a Promise for every file that's found. Though, we only selectively fetch the ones with the meta info of the title at first.
+            console.group(`Selective fetching for ${settings.githubRepositoryUrl}...`);
+            // TODO: Check if console.groupCollapsed() is better suited.
+            // TODO: Also, maybe add console.time() to check meta parsing performance.
+            Promise.all(filterUndefined(treeResponse.tree.map(listResponses))).then(dataResponses => { // Wait for all promises to resolve themselves asynchronously
+                console.groupEnd(); // End "selective fetching" group
                 showLoad();
                 titleIdString = "";
                 for (game in gameList) {

@@ -20,8 +20,27 @@
 // There's 4 instruction groups already predefined: auto, ratio, gamepad, manual.
 
 // >>> Structures/Helpers <<<
-function parseValues(stringInstruction) {
-    if ()
+
+function getValueReference(variable) {
+
+}
+
+function parseValue(input_str, context, gameReference) {
+    if (input_str === undefined) {
+        console.debug("Undefined input string, returning empty string...");
+        return "";
+    }
+    else if (input_str.trim() === "") {
+        console.debug("Empty input string, returning empty string...");
+        return "";
+    }
+    // Parse the values
+    _input_str = input_str.trim();
+
+    // TODO: Get the values
+    if (gameReference.gameVariables.hasOwnProperty(_input_str)) {
+        input_str
+    }
 }
 
 function getKeyProperties(keyString) {
@@ -70,7 +89,7 @@ function parseMeta(txtFile, propertyReference) {
         let metaLine = metaLines[i].trim();
         if (metaLine.startsWith("## ")) {
             // Begin parsing the meta line
-            metaKeyProperties = getKeyProperties(metaLine.slice(3));
+            instruction = getKeyProperties(metaLine.slice(3));
             if (propertyReference===undefined) returnMeta[metaKeyProperties[0]] = metaKeyProperties[1];
             else propertyReference[metaKeyProperties[0]] = metaKeyProperties[1];
         }
