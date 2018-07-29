@@ -3,6 +3,7 @@
 
 
 var gameList = {};
+var processingList = {};
 
 function textureRule(sectionName) {
     this.sectionName = sectionName;
@@ -22,27 +23,30 @@ function textureRule(sectionName) {
     this.overwriteFormat = [undefined, 0, 0];
 }
 
-function addGameList(folderName, gameTitle) { // Using templates to add new game entries.
+function addGameList(folderName, searchTags) { // Using templates to add new game entries.
     document.getElementById("gameList").appendChild(document.importNode(document.querySelector('#gameEntryTemplate').content, true));
     currentGameTemplate = document.getElementById("input_folderName").parentElement;
     currentGameTemplate.getElementsByTagName("input")[0].id = "input_" + folderName;
     currentGameTemplate.getElementsByTagName("input")[0].name = folderName;
     currentGameTemplate.getElementsByTagName("label")[0].htmlFor = "input_" + folderName;
     currentGameTemplate.getElementsByTagName("p")[0].id = "label_" + folderName;
-    gameList[folderName].displayName = gameTitle[0];
-    currentGameTemplate.getElementsByTagName("label")[0].innerText = gameTitle[0]; // The first name tag should always be the game name.
+    gameList[folderName].displayName = searchTags[0];
+    currentGameTemplate.getElementsByTagName("label")[0].innerText = searchTags[0]; // The first name tag should always be the game name.
     
     // Try to avoid name overflows by approximately calculating the length and optionally change it's listed title.
     if (document.getElementsByName("selectGames")[0].offsetWidth < currentGameTemplate.getElementsByTagName("label")[0].offsetWidth) {
-        if (gameTitle.length > 0) gameList[folderName].displayName = gameTitle[1]; // Use the second name if the first one is too long.
+        console.debug(`${searchTags[0]} overflowed the search width, using ${searchTags[1]}.`);
+        if (searchTags.length > 0) gameList[folderName].displayName = searchTags[1]; // Use the second name if the first one is too long.
     }
     currentGameTemplate.getElementsByTagName("label")[0].innerText = gameList[folderName].displayName;
     currentGameTemplate.getElementsByTagName("p")[0].innerText = gameList[folderName].displayName;
 }
 
 function showLoad() {
-    for (var game in gameList) {
-        addGameList(game, gameList[game].searchTags);
+    for (let game in gameList) {
+        gameList[game].gameVariables.searchTags = gameList[game].gameVariables.searchTags || [];
+        gameList[game].gameVariables.searchTags.unshift(gameList[game].gameVariables.name);
+        addGameList(game, gameList[game].gameVariables.searchTags);
     }
 }
 
@@ -83,14 +87,20 @@ function listResponses(treeEntry) {
     if (treeEntry.path.split("/").length - 1 === 0) {
         // Found game folder, add game's array to gameList.
         gameList[treeEntry.path] = {}; // Before storing any attributes to the gameList's file entry, make an empty gameList attributes for this game.
-        currentGame = treeEntry.path; // This is just some short some shorthand stuff.
+        gameList[treeEntry.path].gameVariables = {};
     }
     else if (treeEntry.path === treeEntry.path.split("/")[0] + "/rules.txt") { // Selective fetching and parsing phase
         // Found main resolution pack, crawl meta info.
         return fetchText(treeEntry.path).then(rulesResponse => {
-            console.group(`Meta Parsing: ${treeEntry.path}`);
+            console.groupCollapsed(`Meta Parsing: ${treeEntry.path}`);
             console.time(`${treeEntry.path} parsing time`);
-            parseMeta(rulesResponse);
+            try {
+                parseMeta(rulesResponse, gameList[treeEntry.path.split("/")[0]]);
+            }
+            catch (parsingError) {
+                console.error("Meta parsing ended in an error, therefor couldn't complete this game's meta parsing. Critical error was "+parsingError);
+                // TODO: Keep in mind that failing meta parsing should only disable further parsing of this game specifically, not other packs.
+            }
             console.timeEnd(`${treeEntry.path} parsing time`);
             console.groupEnd();
             return rulesResponse;
@@ -109,24 +119,15 @@ function listGames(treeFetchUrl) { // Fetch repository contents
         fetchGithubJson(treeFetchUrl).then(treeResponse => {
             // Initialize a Promise for every file that's found. Though, we only selectively fetch the ones with the meta info of the title at first.
             console.group(`Selective fetching for ${settings.githubRepositoryUrl}...`);
+            console.time("Meta parsing time");
             // TODO: Check if console.groupCollapsed() is better suited.
-            // TODO: Also, maybe add console.time() to check meta parsing performance.
             Promise.all(filterUndefined(treeResponse.tree.map(listResponses))).then(dataResponses => { // Wait for all promises to resolve themselves asynchronously
+                console.debug("Meta parsing completed", gameList);
+                console.timeEnd("Meta parsing time");
                 console.groupEnd(); // End "selective fetching" group
                 showLoad();
-                titleIdString = "";
-                for (game in gameList) {
-                    titleIdString = titleIdString+(gameList[game].gameId[0]+"|");
-                }
-/*              ungroupedCompatRatings = new Object;
-                fetchGeneralJson("https://cors-anywhere.herokuapp.com/http://compat.cemu.info/w/api?action=query&titles="+titleIdString.slice(0, -1)+"&redirects&prop=revisions|redirects&rvprop=content&format=json", { cache: "force-cache" }).then(function (compatResponse) {
-                    // Load the fetched response to the gameList. The response has all of the titles compatibility info.
-                    for (game in compatResponse.query.pages) {
-                        if (compatResponse.query.pages[game].redirects!==undefined) ungroupedCompatRatings[compatResponse.query.pages[game].redirects[0].title] = compatResponse.query.pages[game].revisions[0]["*"].match(/(?:version=)[^|]+|(?:OS=)[^|]+|(?:region=)[^|]+|(?:CPU=)[^|]+|(?:GPU=)[^|]+|(?:user=)[^|]+|(?:FPS=)[^|]+|(?:rating=)[^|]+|(?:notes=)[^}}]/gm);
-                    }
-                });
-*/
-                console.log("All promises are resolved, succesfully loaded " + dataResponses.length + " responses!");
+                // TODO: Begin doing compat wiki fetches to get compatibility while user selects games.
+                console.info("All promises are resolved, succesfully loaded " + dataResponses.length + " responses!");
             });
         });
     }
@@ -193,7 +194,7 @@ function loadSettings() {
         }
 
     }
-    if (localStorage.getItem("enableLocalstorage") !== null) { // User has made an active decision about localstorage
+    if (localStorage.getItem("enableLocalstorage") !== null) { // User has made an active decision about local storage
         document.getElementById("localstorageWarning").style = "display: none;";
     }
 }
@@ -201,8 +202,8 @@ function loadSettings() {
 loadSettings();
 repositoryUsername = settings.githubRepositoryUrl.split('/')[3];
 repositoryName = settings.githubRepositoryUrl.split('/')[4];
-defaultFetchUrl = "https://api.github.com/repos/" + repositoryUsername + "/" + repositoryName + "/git/trees/master:src?recursive=3";
-defaultFileUrl = "https://raw.githubusercontent.com/" + repositoryUsername + "/" + repositoryName + "/master/src/";
+defaultFetchUrl = "https://api.github.com/repos/" + repositoryUsername + "/" + repositoryName + "/git/trees/"+settings.githubRepositoryBranch+":src?recursive=3";
+defaultFileUrl = "https://raw.githubusercontent.com/" + repositoryUsername + "/" + repositoryName + "/"+settings.githubRepositoryBranch+"/src/";
 reportUrl = "https://github.com/" + repositoryUsername + "/" + repositoryName + "/issues/";
 
 // Initiates games fetching

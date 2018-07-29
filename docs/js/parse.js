@@ -3,6 +3,7 @@
 // >>> Guidelines <<<
 // Skip the rules that are entirely static values and don't need processing.
 // Now 'group' the instructions that belong to the same 'input'.
+// Uses self-developed template/parsing for speed/simplicity
 
 // Now some information over the syntax usage in the graphic packs:
 // A group can consist of:
@@ -21,26 +22,63 @@
 
 // >>> Structures/Helpers <<<
 
-function getValueReference(variable) {
-
-}
-
-function parseValue(input_str, context, gameReference) {
+function parseValue(input_str, gameReference) {
     if (input_str === undefined) {
         console.debug("Undefined input string, returning empty string...");
         return "";
     }
     else if (input_str.trim() === "") {
-        console.debug("Empty input string, returning empty string...");
+        console.debug("Empty input string, returning empty string.");
         return "";
     }
     // Parse the values
-    _input_str = input_str.trim();
+    let _input_str = input_str.trim();
 
-    // TODO: Get the values
-    if (gameReference.gameVariables.hasOwnProperty(_input_str)) {
-        input_str
+
+    // Check if assignment
+    if (_input_str.slice(0, _input_str.indexOf("(")).includes("=")) {
+        console.debug("Instruction is an assignment.");
+        let assignmentInstruction = _input_str.slice(_input_str.indexOf("=")+1).trim();
+        console.groupCollapsed(`Parsing "${assignmentInstruction}" assignment instruction`);
+        try {
+            let returnedInstruction = parseValue(assignmentInstruction, gameReference);
+            console.info("Assignment instruction succesfully parsed", returnedInstruction);
+            gameReference.gameVariables[_input_str.slice(0, _input_str.indexOf("=")).trim()] = returnedInstruction;
+            console.groupEnd();
+            return "";
+        }
+        catch (assignmentInstructionParseError) {
+            console.error("Failed parsing an assignment instruction: "+assignmentInstructionParseError);
+            console.groupEnd();
+        }
     }
+
+    // Number
+    if (Number(_input_str) === NaN) {
+        if (Number(_input_str).toString() === _input_str) {
+            console.debug("Parsing single number", _input_str);
+            return Number(_input_str);
+        }
+        else {
+            console.debug("Parsing number which is used in a calculation...");
+        }
+    }
+    // Strings, javascript objects
+    try {
+        let JsonObject = JSON.parse(_input_str);
+        console.debug("Parsing object", JsonObject);
+        return JsonObject;
+    }
+    catch (jsonParsingError) {}
+
+    // Check if variable
+    if (gameReference.gameVariables.hasOwnProperty(_input_str)) {
+        return gameReference.gameVariables[_input_str];
+    }
+
+    // No parsing could be done
+    console.warn("Failed to parse "+_input_str+".");
+    return "";
 }
 
 function getKeyProperties(keyString) {
@@ -55,7 +93,7 @@ function checkTextureLine(ruleInstruction) {
     if (ruleInstruction === undefined) { // Skip undefined things for rules that e.g. don't have overwriteFormats.
         return true;
     }
-    ruleInstructionSingle = ruleInstruction.split(",")[0]; // Only check the first value. Don't make instructions with mixed static types like e.g. `overwriteFormat = 0x01a,input()` but include them to the instruction.
+    ruleInstructionSingle = ruleInstruction.split(",")[0]; // Only check the first value. Don't make instructions with mixed static types like e.g. `overwriteFormat = 0x01a,exampleInstruction()` but include them to the instruction.
     if (typeof Number(ruleInstructionSingle) === "number") { // Check if it's only a number or a hex value.
         if (!(Number.isInteger(Number(ruleInstructionSingle)) !== 0)) {
             // It's not an integer (or it's a 0 integer, doesn't do anything in rules.txt)
@@ -71,28 +109,35 @@ function checkTextureLine(ruleInstruction) {
 }
 
 // >>> Parsing <<<
-function parseMeta(txtFile, propertyReference) {
-    // If no propertyReference is given, this function will return an object with the whole meta (used by the initial main rules.txt scan)
-    // If it is given though, this function will not return anything but change the reference directly (used by the other rules.txt scans).
-
+function parseMeta(txtFile, gameReference) {
     // Optimize meta parsing
     // - This function will pretty much determine the speed of the site if the website isn't the bottleneck.
     // - Returns an object with the properties.
 
-    let returnMeta = {};
     let endOfMeta = txtFile.indexOf("\n", txtFile.lastIndexOf("##"));
     let metaLines = txtFile.slice(0, endOfMeta).split(/\r?\n/);
+
     console.debug(`Optimizing meta parsing, only reading ${endOfMeta} of ${txtFile.length} characters.`);
 
     // Cycle through each meta line.
     for (i=0; i<metaLines.length; i++) {
         let metaLine = metaLines[i].trim();
         if (metaLine.startsWith("## ")) {
-            // Begin parsing the meta line
-            instruction = getKeyProperties(metaLine.slice(3));
-            if (propertyReference===undefined) returnMeta[metaKeyProperties[0]] = metaKeyProperties[1];
-            else propertyReference[metaKeyProperties[0]] = metaKeyProperties[1];
+            console.groupCollapsed(`Parsing "${metaLine.slice(3)}" meta instruction...`);
+            try {
+                instruction = parseValue(metaLine.slice(3), gameReference);
+            }
+            catch (metaParseError) {
+                console.error("Failed parsing a meta instruction: "+metaParseError);
+            }
+            console.info("Instruction succesfully parsed", instruction);
+            console.groupEnd();
+        }
+        else if (metaLine.startsWith("name =")) {
+            gameReference.gameVariables.name = metaLine.slice(4).split('"')[1];
+        }
+        else if (metaLine.startsWith("titleIds =")) {
+            gameReference.gameVariables.titleIds = metaLine.slice(10).trim().split(",");
         }
     }
-    console.debug(`Found ${returnMeta.keys.length} keys.`);
 }

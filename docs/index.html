@@ -22,7 +22,8 @@
         // >>> Build/page settings <<<
         settings = { // Default settings
             enableLocalstorage: false,
-            githubRepositoryUrl: "https://github.com/" + window.location.host.split(".")[0] + "/" + window.location.pathname.split("/")[1] // Assumes website is using Github Pages url structure
+            githubRepositoryUrl: "https://github.com/" + window.location.host.split(".")[0] + "/" + window.location.pathname.split("/")[1], // Assumes website is using Github Pages url structure
+            githubRepositoryBranch: "master"
         }
     </script>
     <script type="text/javascript" src="js/parse.js" defer></script>
@@ -98,6 +99,8 @@
                         <label for="enableLocalstorage">Enable Localstorage</label><br>
                         <label for="githubRepositoryUrl">Github Repository Url</label>
                         <input type="text" id="githubRepositoryUrl" onChange="storeSettings(this);"/><br>
+                        <label for="githubRepositoryBranch">Github Repository Branch</label>
+                        <input type="text" id="githubRepositoryBranch" onChange="storeSettings(this);"/><br>
                         <span id="themes" onChange="storeSettings(this);">
                             Theme:
                             <input type="radio" id="lightTheme" name="theme" value="light" checked/>
