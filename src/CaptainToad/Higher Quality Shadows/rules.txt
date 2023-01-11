@@ -1,0 +1,6 @@
+[TextureRedefine] # Scale shadows
+width = 1024
+height = 1024
+formats = 0x005
+overwriteWidth = 2048
+overwriteHeight = 2048

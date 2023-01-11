@@ -22,10 +22,11 @@
         // >>> Build/page settings <<<
         settings = { // Default settings
             enableLocalstorage: false,
-            githubRepositoryUrl: "https://github.com/" + window.location.host.split(".")[0] + "/" + window.location.pathname.split("/")[1] // Assumes website is using Github Pages url structure
+            githubRepositoryUrl: "https://github.com/" + window.location.host.split(".")[0] + "/" + window.location.pathname.split("/")[1], // Assumes website is using Github Pages url structure
+            githubRepositoryBranch: "master"
         }
-
     </script>
+    <script type="text/javascript" src="js/parse.js" defer></script>
     <script type="text/javascript" src="js/build.js" async></script>
     <script type="text/javascript" src="js/index.js" defer></script>
 </head>
@@ -33,9 +34,9 @@
 	<header>
 		<a id="logo" href="/index.html">Cemu Graphic Packs</a>
 		<nav>
-			
 			<ul class="progressBar">
                 <li><strong>Graphic Packs Configurator</strong></li>
+                <li><strong>Download all graphic packs</strong></li>
 				<!-- Implement some navigation, although not sure atm.
 				<li><a id="progressBar1" href="#">Select games</a></li>
 				<li><a id="progressBar2" href="#">Select your Graphic Pack Settings</a></li>
@@ -98,6 +99,8 @@
                         <label for="enableLocalstorage">Enable Localstorage</label><br>
                         <label for="githubRepositoryUrl">Github Repository Url</label>
                         <input type="text" id="githubRepositoryUrl" onChange="storeSettings(this);"/><br>
+                        <label for="githubRepositoryBranch">Github Repository Branch</label>
+                        <input type="text" id="githubRepositoryBranch" onChange="storeSettings(this);"/><br>
                         <span id="themes" onChange="storeSettings(this);">
                             Theme:
                             <input type="radio" id="lightTheme" name="theme" value="light" checked/>

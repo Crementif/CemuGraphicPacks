@@ -14,17 +14,17 @@ function showPreview(elementClicked) {
     }
     // Change the preview.
     document.getElementById("settingsSection").className = "maximized";
-    document.getElementById("gameTitle").innerText = gameList[currentFolderName].displayName;
-    // Check if it's the last option, change the next button.
+    document.getElementById("gameTitle").innerText = gameList[currentFolderName].gameVariables.name;
+    document.getElementById("nextButton").title=gameList[currentFolderName];
 }
 
 function filterGameList(searchString) {
     searchResults = 0;
     if (searchString.value.toLowerCase().indexOf("mario od") > -1) document.getElementById("logo").innerText = "SwEmu Graphic Packs"; // 'ha funny'
     for (var game in gameList) {
-        for (i = 0; i < gameList[game].searchTags.length; i++) {
+        for (i = 0; i < gameList[game].gameVariables.searchTags.length; i++) {
             // Now compare it with the search string.
-            if (gameList[game].searchTags[i].toLowerCase().indexOf(searchString.value.toLowerCase()) > -1) {
+            if (gameList[game].gameVariables.searchTags[i].toLowerCase().indexOf(searchString.value.toLowerCase()) > -1) {
                 document.getElementsByName(game)[0].parentElement.style = "";
                 searchResults += 1;
                 break; // Found 1 tag that matched. Quit looping this game entry.
@@ -53,11 +53,18 @@ function togglePopup(event) {
     }
 }
 
+function showGame(currentPopup) {
+    console.log(currentPopup);
+}
+
 function continueToSettings() {
     document.getElementById("continueButton").value = "Go back";
     document.getElementById("actionTitle").innerText = "Select a game to view it's options.";
     // Go to the next stage
     document.getElementsByTagName("main")[0].classList.add("selectOptions"); // The stage switching is purely cosmetic
+    // Make a new array with all of the selected packs.
+    document.querySelectorAll(".checkbox:checked ~ .clickLabel").forEach(selectedGame => {
+    });
 }
 
 function checkSelectionHover() {

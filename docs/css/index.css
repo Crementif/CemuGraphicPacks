@@ -152,14 +152,18 @@ form #searchGames {
 }
 
 #noSelectionText {
+    position: relative;
+    top: 16px;
     color: red;
     font-weight: 500;
     opacity: 0.0;
-    transition: opacity 4s;
+    transition-property: opacity;
+    transition-duration: 8s;
 }
 
-#continueButton:disabled ~ #noSelectionText {
+#continueButton:disabled:hover ~ #noSelectionText {
     opacity: 1.0;
+    transition-duration: 1s !important;
 }
 
 #downloadButton:hover {
