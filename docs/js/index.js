@@ -64,7 +64,6 @@ function continueToSettings() {
     document.getElementsByTagName("main")[0].classList.add("selectOptions"); // The stage switching is purely cosmetic
     // Make a new array with all of the selected packs.
     document.querySelectorAll(".checkbox:checked ~ .clickLabel").forEach(selectedGame => {
-        processingList.
     });
 }
 
